@@ -4,10 +4,10 @@ using System.Collections;
 public class WanderState : IEnemyState
 
 {
-    private readonly StatePattern myObject;
+    private readonly AIStatePattern myObject;
     private float thinkTimer;
 
-    public WanderState(StatePattern statePattern)
+    public WanderState(AIStatePattern statePattern)
     {
         myObject = statePattern;
     }

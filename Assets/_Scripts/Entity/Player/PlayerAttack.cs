@@ -74,7 +74,7 @@ public class PlayerAttack : MonoBehaviour
         for (int i = 0; i < targets.Count; i++)
         {
             // Do attack script
-            CombatModifier.ProcessAttack(gameObject, _baseCharacter.Attack, targets[i]);
+            CombatModifier.ProcessAttack(gameObject, _baseCharacter.Attack, CriticalChance.CheckCritical(_baseCharacter.CriticalChance), targets[i]);
         }
 
         yield return new WaitForSeconds(animationDuration - eventDelay);

@@ -3,10 +3,10 @@ using System.Collections;
 
 public class PatrolState : IEnemyState
 {
-    private readonly StatePattern myObject;
+    private readonly AIStatePattern myObject;
     private int nextWayPoint;
 
-    public PatrolState(StatePattern statePattern)
+    public PatrolState(AIStatePattern statePattern)
     {
         myObject = statePattern;
     }

@@ -4,11 +4,11 @@ using System.Collections;
 public class IdleState : IEnemyState
 
 {
-    private readonly StatePattern myObject;
+    private readonly AIStatePattern myObject;
     private float idleTimer;
     private float randomIdletime;
 
-    public IdleState(StatePattern statePatternEnemy)
+    public IdleState(AIStatePattern statePatternEnemy)
     {
         myObject = statePatternEnemy;
     }
@@ -23,7 +23,6 @@ public class IdleState : IEnemyState
     {
         Look();
         Idle();
-        Debug.Log(idleTimer);
     }
 
     public void ToPatrolState()
@@ -68,7 +67,7 @@ public class IdleState : IEnemyState
     {
         myObject.navMeshAgent.Stop();
         
-        idleTimer += Time.deltaTime + myObject.thinkTimer;
+        idleTimer += Time.deltaTime + myObject.thinkInterval;
 
         if (idleTimer >= randomIdletime)
         {

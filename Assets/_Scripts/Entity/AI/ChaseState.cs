@@ -5,10 +5,11 @@ using System.Collections.Generic;
 public class ChaseState : IEnemyState
 {
 
-    private readonly StatePattern myObject;
+    private readonly AIStatePattern myObject;
+    private float chaseTimer;
     private bool isChasing = false;
 
-    public ChaseState(StatePattern statePatternEnemy)
+    public ChaseState(AIStatePattern statePatternEnemy)
     {
         myObject = statePatternEnemy;
     }
@@ -23,6 +24,7 @@ public class ChaseState : IEnemyState
 
     public void UpdateState()
     {
+        ChaseTimer();
         Chase();
     }
 
@@ -53,6 +55,18 @@ public class ChaseState : IEnemyState
     {
         myObject.currentState = myObject.attackState;
         myObject.currentState.StartState();
+    }
+
+    private void ChaseTimer()
+    {
+        chaseTimer += Time.deltaTime + myObject.thinkInterval;
+
+        if (chaseTimer >= myObject.chaseMaxTime)
+        {
+            chaseTimer = 0;
+            myObject.ToBaseState();
+        }
+        //Debug.Log(chaseTimer);
     }
 
     private void Chase()

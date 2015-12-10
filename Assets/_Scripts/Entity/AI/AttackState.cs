@@ -5,10 +5,10 @@ using System.Collections.Generic;
 public class AttackState : IEnemyState
 {
 
-    private readonly StatePattern myObject;
+    private readonly AIStatePattern myObject;
     private float thinkTimer;
 
-    public AttackState(StatePattern statePatternEnemy)
+    public AttackState(AIStatePattern statePatternEnemy)
     {
         myObject = statePatternEnemy;
     }
@@ -60,7 +60,8 @@ public class AttackState : IEnemyState
     {
         if (myObject._attackArea.GetTargetsInView().Count != 0)
         {
-            Debug.Log("Attack!");
+            //Debug.Log("Attack!");
+            myObject._enemyAttack.Attack();
         }
         else
         {
