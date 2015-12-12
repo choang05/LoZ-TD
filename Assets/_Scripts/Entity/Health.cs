@@ -6,29 +6,29 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private float currentHP;
     [SerializeField] private float maxHP = 100;
-    [SerializeField] private float hpPercentage;
+    [SerializeField] [Range(0, 100)] private int hpPercentage;
     [SerializeField] private bool isDead = false;
-	
-	//public Animator anim;
-	//private Slider healthBar;
-	//private Death _death;
-	private Transform UIObj;
 
-    void Awake () 
-	{
-		//anim = GetComponentInChildren<Animator>();
-		//healthBar = GetComponentInChildren<Slider>();
-		//_death = GetComponent<Death>();
-		//_AIPath = GetComponent<AIPath>();
-		UIObj = transform.FindChild("UI");
-		//exploder = GetComponentInChildren<Exploder>();
-	}
+    // UI
+    public Slider healthBarSlider;
+    private Text healthBarText;
+    [SerializeField] private bool showHealth = false;
 
-	void Start()
+    void Awake()
+    {
+        healthBarText = healthBarSlider.GetComponentInChildren<Text>();
+    }
+
+    void Start()
 	{
 		currentHP = maxHP;
-		hpPercentage = currentHP / maxHP * 100;
-	}
+		hpPercentage = (int)((currentHP / maxHP) * 100);
+        healthBarSlider.value = hpPercentage;
+        if(healthBarText != null)
+            healthBarText.text = currentHP + "/" + maxHP;
+        if(showHealth == true)
+            healthBarSlider.gameObject.SetActive(false);
+    }
 	
 	// Update is called once per frame
 	void Update () 
@@ -45,8 +45,7 @@ public class Health : MonoBehaviour
 		if(!isDead)
 		{
 			currentHP += amount;
-			hpPercentage = currentHP / maxHP * 100;
-            //healthBar.value = hpPercentage;
+			hpPercentage = (int)((currentHP / maxHP) * 100);
 		}
 
 		//If HP hits 0, declare it Dead if not already
@@ -54,15 +53,18 @@ public class Health : MonoBehaviour
 		{
 			isDead = true;
 			//healthBar.gameObject.SetActive(false);
-			death();
+			//death();
 		}
-	}
 
-	public void death()
-	{
-		//SendMessageUpwards("decreaseCount", SendMessageOptions.DontRequireReceiver);
-		//_death.destroy();
-	}
+        // Update UI
+        if (showHealth && healthBarSlider.gameObject.activeSelf == false)
+            healthBarSlider.gameObject.SetActive(true);
+
+        if (healthBarText != null)
+            healthBarText.text = currentHP + "/" + maxHP;
+
+        healthBarSlider.value = hpPercentage;
+    }
 
     // Actuators and Mutators
     public float CurrentHP
@@ -75,7 +77,7 @@ public class Health : MonoBehaviour
         get { return maxHP; }
         set { maxHP = value; }
     }
-    public float HPPercentage
+    public int HPPercentage
     {
         get { return hpPercentage; }
         set { hpPercentage = value; }

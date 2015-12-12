@@ -7,7 +7,6 @@ public class TargetsInSight : MonoBehaviour
     // Attributes 
     public float fieldOfViewAngle = 110f;
     private float angleFromTarget;
-    private CapsuleCollider col;
     public bool isEnemy = false;
     public bool isPlayer = false;
 
@@ -15,11 +14,6 @@ public class TargetsInSight : MonoBehaviour
     List<GameObject> targetsInRange = new List<GameObject>();
     [SerializeField]
     List<GameObject> targetsInView = new List<GameObject>();
-
-    void Awake()
-    {
-        col = GetComponent<CapsuleCollider>();
-    }
 
     void Start()
     {

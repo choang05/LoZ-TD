@@ -12,8 +12,11 @@ public class CombatModifier : MonoBehaviour
 	[SerializeField] private GameObject damageTextObject;
 	private static Text damageText;
 
-	// Use this for initialization
-	void Start ()
+    // Animation
+    static int isCriticalHash = Animator.StringToHash("isCritical");
+
+    // Use this for initialization
+    void Awake ()
     {
 		damageText = damageTextObject.transform.GetChild(0).GetComponent<Text>();
 	}
@@ -23,15 +26,17 @@ public class CombatModifier : MonoBehaviour
         float adjustedDamage = ModifyDamage(Source, Damage, didCrit, Target);
 
         Target.GetComponent<Health>().AdjustHP(adjustedDamage * -1);
-		DisplayCombatText(Target, damageText.transform.parent, Target.transform.position + Target.transform.up * 1.5f, adjustedDamage.ToString());  
 
-        Debug.Log(Source.GetComponent<BaseCharacter>().Name + " dealt " + adjustedDamage + " damage to " + Target.GetComponent<BaseCharacter>().Name);
+        DisplayCombatText(Source, Target, didCrit, damageText.transform.parent, Target.transform.position + Target.transform.up * 1.5f, adjustedDamage.ToString());
+
+        setAttacker(Source, Target);
+
+        //Debug.Log(Source.GetComponent<BaseCharacter>().Name + " dealt " + adjustedDamage + " damage to " + Target.GetComponent<BaseCharacter>().Name);
     }
 
     // returns the final applied damage after modifying calculations
     private static int ModifyDamage(GameObject source, float damage, bool didCrit, GameObject target)
     {
-        int adjustedDamage = 0;
         // Get stats from source and target to compute with
         BaseCharacter sourceStats = source.GetComponent<BaseCharacter>();
         BaseCharacter targetStats = target.GetComponent<BaseCharacter>();
@@ -49,7 +54,7 @@ public class CombatModifier : MonoBehaviour
             modifiedAttack *= sourceStats.CritMultiplier;
 
         //  Final damage calculated after reductions and modifiers
-        adjustedDamage = Mathf.RoundToInt(modifiedAttack * damageReduction);
+        int adjustedDamage = Mathf.RoundToInt(modifiedAttack * damageReduction);
 
         // We do not want the attack to heal the damage if the damage is negative.
         if (adjustedDamage <= 0)
@@ -58,17 +63,38 @@ public class CombatModifier : MonoBehaviour
         return adjustedDamage;
     }
 
-	private static void DisplayCombatText(GameObject target, Transform textObject, Vector3 displayPosition, string displayText)
+	private static void DisplayCombatText(GameObject source, GameObject target, bool didCrit, Transform textObject, Vector3 displayPosition, string displayText)
 	{
         //  Create the combat text object in space
-		Transform tempTextObject = Instantiate(textObject, displayPosition, Quaternion.identity) as Transform;
+        Transform tempTextObject = Instantiate(textObject, displayPosition, Quaternion.identity) as Transform; ;
+        if (didCrit)
+            tempTextObject.GetComponent<Animator>().SetBool(isCriticalHash, true);
+        else
+            tempTextObject.GetComponent<Animator>().SetBool(isCriticalHash, false);
+
         Text tempText = tempTextObject.GetChild(0).GetComponent<Text>();
         tempText.text = displayText;
-
-        // Change text color based on target type
-        if (target.CompareTag(Tags.Player))
+        
+        // Change text color based on source type
+        if(didCrit)
+            tempText.color = Color.yellow;
+        else if (source.CompareTag(Tags.Player))
+           tempText.color = Color.white;
+        else if(source.CompareTag(Tags.Enemy))
             tempText.color = Color.red;
-        else if(target.CompareTag(Tags.Enemy))
-            tempText.color = Color.white;
+    }
+
+    public static void setAttacker(GameObject Source, GameObject Target)
+    {
+        // If a player attacks an enemy, set their enemys target to attacker
+        if (Source.CompareTag(Tags.Player) && Target.CompareTag(Tags.Enemy))
+        {
+            AIStatePattern tempState = Target.GetComponent<AIStatePattern>();
+            if(tempState.canChase || tempState.canAttack)
+            {
+                tempState.chaseTarget = Source.transform;
+                tempState.currentState = tempState.chaseState;
+            }
+        }
     }
 }

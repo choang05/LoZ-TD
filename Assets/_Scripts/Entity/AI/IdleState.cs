@@ -15,7 +15,7 @@ public class IdleState : IEnemyState
 
     public void StartState()
     {
-        myObject.meshRendererFlag.material.color = Color.yellow;
+        myObject.meshRendererFlag.material.color = Color.cyan;
         randomIdletime = Random.Range(1, myObject.idleMaxTime);
     }
 
@@ -59,14 +59,15 @@ public class IdleState : IEnemyState
         if (myObject._lookArea.GetTargetsInView().Count != 0)
         {
             myObject.chaseTarget = myObject._lookArea.GetTargetsInView()[0].transform;
-            ToChaseState();
+            if(myObject.canChase)
+                ToChaseState();
         }
     }
 
     private void Idle()
     {
         myObject.navMeshAgent.Stop();
-        
+
         idleTimer += Time.deltaTime + myObject.thinkInterval;
 
         if (idleTimer >= randomIdletime)

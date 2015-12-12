@@ -24,7 +24,7 @@ namespace UnityStandardAssets.ImageEffects
         [Range(0.0f, 15.0f)]
         public float blurArea = 1.0f;
 
-        [Range(0.0f, 41.0f)]
+        [Range(0.0f, 25.0f)]
         public float maxBlurSize = 5.0f;
 
         [Range(0, 1)]

@@ -13,7 +13,6 @@ public class BaseCharacter : MonoBehaviour
     [SerializeField] private float critChance;
     [SerializeField] private float critMultiplier;
 
-
     // Actuators and Mutators
     public string Name
     {

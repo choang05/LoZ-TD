@@ -61,6 +61,7 @@ public class AttackState : IEnemyState
         if (myObject._attackArea.GetTargetsInView().Count != 0)
         {
             //Debug.Log("Attack!");
+            myObject.transform.LookAt(myObject.chaseTarget);
             myObject._enemyAttack.Attack();
         }
         else

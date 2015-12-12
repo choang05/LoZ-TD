@@ -7,7 +7,6 @@ public class ChaseState : IEnemyState
 
     private readonly AIStatePattern myObject;
     private float chaseTimer;
-    private bool isChasing = false;
 
     public ChaseState(AIStatePattern statePatternEnemy)
     {
@@ -16,7 +15,7 @@ public class ChaseState : IEnemyState
 
     public void StartState()
     {
-        myObject.meshRendererFlag.material.color = Color.blue;
+        myObject.meshRendererFlag.material.color = Color.yellow;
         myObject.chaseTarget = myObject._lookArea.GetTargetsInView()[0].transform;
         myObject.navMeshAgent.destination = myObject.chaseTarget.position;
         myObject.navMeshAgent.Resume();
@@ -64,6 +63,7 @@ public class ChaseState : IEnemyState
         if (chaseTimer >= myObject.chaseMaxTime)
         {
             chaseTimer = 0;
+            myObject.chaseTarget = null;
             myObject.ToBaseState();
         }
         //Debug.Log(chaseTimer);
@@ -73,9 +73,13 @@ public class ChaseState : IEnemyState
     {
         float distanceFromTarget = Vector3.Distance(myObject.transform.position, myObject.chaseTarget.position);
 
-        if (distanceFromTarget <= myObject.navMeshAgent.stoppingDistance && myObject._attackArea.GetTargetsInView().Count != 0)
+        if (distanceFromTarget <= myObject.navMeshAgent.stoppingDistance)
         {
-            ToAttackState();
+            myObject.transform.LookAt(myObject.chaseTarget);
+
+            if(myObject._attackArea.GetTargetsInView().Count != 0)
+                if (myObject.canAttack)
+                    ToAttackState();
         }
         else
         {

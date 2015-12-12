@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerAttack : MonoBehaviour
+public class PlayerMeleeAttack : MonoBehaviour
 {
     // Attributes
     [SerializeField] private bool canAttack = true;
@@ -15,13 +15,10 @@ public class PlayerAttack : MonoBehaviour
 
     // Animation
     private Animator animator;
-    AnimatorStateInfo stateInfo;
+    //AnimatorStateInfo stateInfo;
     List<int> attackHashes = new List<int>();
     int hashIndex = 0;
-    static int attackHash_0 = Animator.StringToHash("Attack0");
     static int attackHash_1 = Animator.StringToHash("Attack1");
-    static int attackStateHash_0 = Animator.StringToHash("Base Layer.Attack0");
-    static int attackStateHash_1 = Animator.StringToHash("Base Layer.Attack1");
 
     void Awake()
     {
@@ -34,18 +31,18 @@ public class PlayerAttack : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        attackHashes.Add(attackHash_0);
         attackHashes.Add(attackHash_1);
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        //stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         if(canAttack && !isAttacking)
         {
-            if (Input.GetButton("Fire1") || stateInfo.fullPathHash == attackHashes[hashIndex])
+            if (Input.GetButton("Fire1") && !isAttacking)
             {
+                //Debug.Log("Attack");
                 StartCoroutine(Attack());
             }
             else
@@ -59,14 +56,15 @@ public class PlayerAttack : MonoBehaviour
 
     IEnumerator Attack()
     {
-        float animationSpeed = 2;
-        float eventDelay = .2f / animationSpeed;
-        float animationDuration = 1.15f / animationSpeed;
+        float animationSpeed = 1;
+        float animationDuration = .833f / animationSpeed;
+        float eventDelay = .25f / animationSpeed;
 
         isAttacking = true;
         _playerMotor.CanMove = false;
         _playerMotor.CanRotate = false;
-        animator.SetBool(attackHashes[hashIndex], true);
+        //animator.SetBool(attackHashes[hashIndex], true);
+        animator.SetTrigger(attackHashes[hashIndex]);
 
         yield return new WaitForSeconds(eventDelay);   // animation event delay
 
@@ -76,7 +74,6 @@ public class PlayerAttack : MonoBehaviour
             // Do attack script
             CombatModifier.ProcessAttack(gameObject, _baseCharacter.Attack, CriticalChance.CheckCritical(_baseCharacter.CriticalChance), targets[i]);
         }
-
         yield return new WaitForSeconds(animationDuration - eventDelay);
         isAttacking = false;
     }

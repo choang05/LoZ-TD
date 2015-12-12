@@ -63,7 +63,8 @@ public class WanderState : IEnemyState
         if (myObject._lookArea.GetTargetsInView().Count != 0)
         {
             myObject.chaseTarget = myObject._lookArea.GetTargetsInView()[0].transform;
-            ToChaseState();
+            if (myObject.canChase)
+                ToChaseState();
         }
     }
 

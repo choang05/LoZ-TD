@@ -3,8 +3,8 @@ using System.Collections;
 
 public class AIStatePattern : MonoBehaviour
 {
-    // State Types
-    [SerializeField] private StateTypes Type;
+    //  State Types
+    [SerializeField] private StateTypes StateType;
     public enum StateTypes
     {
         Wander,
@@ -15,9 +15,11 @@ public class AIStatePattern : MonoBehaviour
     // Attributes
     public TargetsInSight _lookArea;
     public TargetsInSight _attackArea;
+    public bool canChase;
+    public bool canAttack;
     [HideInInspector] public float thinkInterval = .15f;    // How often unit will 'think' and do commands. 
     [HideInInspector] public float thinkTimer = 0;
-    public int sightRange = 170;                            // Widest angle unit is able to see targets
+    [Range(0, 360)] public int sightRange = 170;            // Widest angle unit is able to see targets up to 360 degrees
     public int wanderRadius = 10;                           // Max distance unit will wander from its origin
     [HideInInspector] public Vector3 wanderOrigin;          // The original position the unit will return wander from within its radius.
     public float idleMaxTime = 3;                           // Max time that unit will idle during IdleState
@@ -37,6 +39,10 @@ public class AIStatePattern : MonoBehaviour
     [HideInInspector] public NavMeshAgent navMeshAgent;
     [HideInInspector] public EnemyAttack _enemyAttack;
 
+    // Animation
+    private Animator animator;
+    static int forwardHash = Animator.StringToHash("Forward");
+
     private void Awake()
     {
         patrolState = new PatrolState(this);
@@ -47,6 +53,7 @@ public class AIStatePattern : MonoBehaviour
 
         navMeshAgent = GetComponent<NavMeshAgent>();
         _enemyAttack = GetComponent<EnemyAttack>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Use this for initialization
@@ -67,15 +74,19 @@ public class AIStatePattern : MonoBehaviour
             currentState.UpdateState();
             thinkTimer = 0;
         }
+        if(currentState == idleState || currentState == attackState)
+            animator.SetFloat(forwardHash, 0);
+        else if(currentState == chaseState || currentState == patrolState || currentState == wanderState)
+            animator.SetFloat(forwardHash, .75f);
     }
 
     public void ToBaseState()
     {
-        if (Type == StateTypes.Idle)
+        if (StateType == StateTypes.Idle)
             currentState = idleState;
-        else if (Type == StateTypes.Wander)
+        else if (StateType == StateTypes.Wander)
             currentState = wanderState;
-        else if (Type == StateTypes.Patrol)
+        else if (StateType == StateTypes.Patrol)
             currentState = patrolState;
 
         currentState.StartState();

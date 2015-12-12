@@ -3,73 +3,80 @@ using System.Collections;
 
 public class Arrow : MonoBehaviour 
 {
-	public float speed;
-	public LayerMask collisionMask;
-	public int maxBounces;
-	public GameObject shooter;
 
-	//private CombatModifier _combatModifer;
+    // Attributes
+	[SerializeField] private float speed;
+    [SerializeField] private int lifeDuration;
+    [SerializeField] private LayerMask collisionMask;
 
-	float damage;
-	int bounceCounter = -1;
-	bool hitTarget = false;
+	private int maxBounces;
+    private string targetableTag;
+	private GameObject source;
+	private float damage;
+    private bool isCrit;
+	private int bounceCounter = 0;
+	private bool didHitTarget = false;
 	
-	// Use this for initialization
-	void Awake () 
-	{
-		//_combatModifer = GameObject.Find("CombatModifers").GetComponent<CombatModifier>();
-	}
-
 	void Start()
 	{
-		StartCoroutine("destory", 2f);
+		StartCoroutine(DestroyDelay(lifeDuration));
 	}
 	
 	// Update is called once per frame
-    /*
+    
 	void Update () 
 	{
-		if(!hitTarget)
+		if(!didHitTarget)
 		{
 			transform.Translate(Vector3.forward * Time.deltaTime * speed);
 			
 			Ray ray = new Ray(transform.position, transform.forward);
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, Time.deltaTime * speed + .1f, collisionMask) && bounceCounter < maxBounces) 
+            // If the ray has hit something that is within our collision paramters
+			if (Physics.Raycast(ray, out hit, Time.deltaTime * speed + .1f, collisionMask)) 
 			{
 				Vector3 reflectDir = Vector3.Reflect(ray.direction, hit.normal);
 				float rot = 90 - Mathf.Atan2(reflectDir.z, reflectDir.x) * Mathf.Rad2Deg;
 				transform.eulerAngles = new Vector3(0, rot, 0);
 				bounceCounter += 1;
 			}
-			else if(Physics.Raycast(ray, out hit, Time.deltaTime * speed + .1f) && bounceCounter < maxBounces)
-			{
-				if(hit.collider.CompareTag(Tags.enemy) && hit.collider == hit.transform.GetComponent<BoxCollider>())
-				{
-					transform.SetParent(hit.transform);
-					hitTarget = true;
-					_combatModifer.modifyDamage(damage, hit.collider.gameObject, shooter);
-					GetComponent<ParticleSystem>().enableEmission = false;
-					StartCoroutine("destory", 10f);
-				}
-			}
-			else if(bounceCounter >= maxBounces)
-				Destroy(gameObject);
-			else
-				StartCoroutine("destory", 2f);
+
+            if(bounceCounter > maxBounces)
+            {
+                Destroy(gameObject);
+            }
 		}
 	}
-    */
-	public void setShooter(GameObject Shooter, int MaxBounces, float Damage)
+    
+	public void SetSource(GameObject Source, int MaxBounces, float Speed, bool IsCrit, string targetTag)
 	{
-		shooter = Shooter;
+        source = Source;
 		maxBounces = MaxBounces;
-		damage = Damage;
+        speed = Speed;
+        isCrit = IsCrit;
+        targetableTag = targetTag;
 	}
 
-	IEnumerator destory(float delay) 
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag(targetableTag) && !didHitTarget)
+        {
+            didHitTarget = true;
+
+            transform.SetParent(other.transform);
+
+            int damage = source.GetComponent<BaseCharacter>().Attack;
+            CombatModifier.ProcessAttack(source, damage, isCrit, other.gameObject);
+
+            //GetComponent<ParticleSystem>().enableEmission = false;
+            StartCoroutine(DestroyDelay(lifeDuration));
+        }
+    }
+
+	IEnumerator DestroyDelay(float delay) 
 	{
 		yield return new WaitForSeconds(delay);
 		Destroy(gameObject);
 	}
+
 }
