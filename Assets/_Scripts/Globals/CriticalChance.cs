@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CriticalChance : MonoBehaviour
+public class CriticalChance
 {
     private static float randValue = 0;
     public static bool CheckCritical(float critChance)
@@ -12,7 +12,7 @@ public class CriticalChance : MonoBehaviour
             randValue = Random.value;
             if (randValue <= critChance)
             {
-                Debug.Log("Critical hit!");
+                //Debug.Log("Critical hit!");
                 return true;
             }
             else
@@ -22,7 +22,7 @@ public class CriticalChance : MonoBehaviour
         }
         else
         {
-            Debug.Log("Critical hit!");
+            //Debug.Log("Critical hit!");
             return true;
         }
     }

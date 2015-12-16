@@ -15,6 +15,13 @@ public class TargetsInSight : MonoBehaviour
     [SerializeField]
     List<GameObject> targetsInView = new List<GameObject>();
 
+    //private CapsuleCollider capsuleCollider;
+
+    void Awake()
+    {
+        //capsuleCollider = GetComponent<CapsuleCollider>();
+    }
+
     void Start()
     {
         if (transform.parent.CompareTag(Tags.Player))
@@ -58,7 +65,6 @@ public class TargetsInSight : MonoBehaviour
             if (other.CompareTag(Tags.Player))
             {
                 targetsInRange.Add(other.gameObject);
-                //Debug.Log("Player in range");
             }
         }
     }
@@ -72,23 +78,28 @@ public class TargetsInSight : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        angleFromTarget = Vector3.Angle(other.transform.position - transform.position, transform.forward);
+        angleFromTarget = Vector3.Angle(other.transform.position - transform.parent.position, transform.parent.forward);
 
+        //  If the target is within view range
         if (angleFromTarget <= fieldOfViewAngle * 0.5f)
         {
-            if(!targetsInView.Contains(other.gameObject))
+            //  If target isn't in the view list already & isn't dead
+            if(!targetsInView.Contains(other.gameObject) && other.GetComponent<Health>() && !other.GetComponent<Health>().IsDead)
             {
                 if (isPlayer)
                 {
                     if (other.CompareTag(Tags.Enemy))
                         targetsInView.Add(other.gameObject);
                 }
-
                 else if (isEnemy)
                 {
                     if (other.CompareTag(Tags.Player))
                         targetsInView.Add(other.gameObject);
                 }
+            }
+            else if(other.GetComponent<Health>() && other.GetComponent<Health>().IsDead)
+            {
+                targetsInView.Remove(other.gameObject);
             }
         }
         else if(angleFromTarget > fieldOfViewAngle * 0.5f)
