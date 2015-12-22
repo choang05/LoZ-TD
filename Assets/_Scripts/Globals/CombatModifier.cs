@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System;
+using PathologicalGames;
 
 public class CombatModifier : MonoBehaviour
 {
@@ -24,27 +25,39 @@ public class CombatModifier : MonoBehaviour
     //  Global method that handles all source-to-target damage interactions
     public static void ProcessAttack(GameObject Source, GameObject secondarySource, float Damage, bool didCrit, GameObject Target)
     {
-        float adjustedDamage = ModifyDamage(Source, Damage, didCrit, Target);
 
         //  if the target is a player and if player blocked the attack
         int blockLevel = GetBlockCheck(Source, Target);
         if (blockLevel != 0)
         {
-            //  If player does a perfect block and the source is a projectile, 'reflect' the projectile back. (delete incoming projectile and spawn new one)    
+            //  If player does a perfect block and the source is a projectile, 'reflect' the projectile back with adjusted parameters.  
             if(blockLevel == 2 && secondarySource)
             {
+                PlayerRange _playerRange = Target.GetComponent<PlayerRange>();
+                Arrow _arrow = secondarySource.GetComponent<Arrow>();
                 secondarySource.transform.LookAt(2 * Source.transform.position - Target.transform.position + Target.transform.up);
-                Arrow _tempArrow = secondarySource.GetComponent<Arrow>();
-                _tempArrow.ResetProjectile();
-                _tempArrow.SetSource(Target, _tempArrow.MaxBounces, _tempArrow.ProjectileSpeed, CriticalChance.CheckCritical(Target.GetComponent<BaseCharacter>().CriticalChance), Tags.Enemy);
+                _arrow.ResetProjectile();
+                _arrow.Source = _playerRange.gameObject;
+                _arrow.MaxBounces = _playerRange.MaxBounces;
+                _arrow.ProjectileSpeed = _playerRange.ProjectileSpeed;
+                _arrow.IsCrit = CriticalChance.CheckCritical(_playerRange.GetComponent<BaseCharacter>().CriticalChance);
+                _arrow.TargetTag = Tags.Enemy;
             }
             //  Audio
             Target.GetComponent<PlayerMelee>().ProcessBlock(blockLevel);
         }
-        else
+        else  // else if attack was not blocked.
         {
+            float adjustedDamage = ModifyDamage(Source, Damage, didCrit, Target);
+
             //  deal the adjusted damage
             Target.GetComponent<Health>().AdjustHP(adjustedDamage * -1);
+
+            //  Extra aftereffects (Processes, Sounds, knockback, etc.)
+            if (Target.CompareTag(Tags.Enemy))
+            {
+                Target.GetComponent<AIStatePattern>().ProcessHit(Source);
+            }
 
             //  UI
             DisplayCombatText(Source, Target, didCrit, damageText.transform.parent, Target.transform.position + Target.transform.up * 1.5f, adjustedDamage.ToString());
@@ -88,7 +101,9 @@ public class CombatModifier : MonoBehaviour
 	private static void DisplayCombatText(GameObject source, GameObject target, bool didCrit, Transform textObject, Vector3 displayPosition, string displayText)
 	{
         //  Create the combat text object in space
-        Transform tempTextObject = Instantiate(textObject, displayPosition, Quaternion.identity) as Transform; ;
+        Transform tempTextObject = PoolManager.Pools["UI"].Spawn(textObject);
+        tempTextObject.transform.position = displayPosition;
+        //Transform tempTextObject = Instantiate(textObject, displayPosition, Quaternion.identity) as Transform; ;
         if (didCrit)
             tempTextObject.GetComponent<Animator>().SetBool(isCriticalHash, true);
         else
@@ -112,7 +127,7 @@ public class CombatModifier : MonoBehaviour
         if (Source.CompareTag(Tags.Player) && Target.CompareTag(Tags.Enemy))
         {
             AIStatePattern tempState = Target.GetComponent<AIStatePattern>();
-            if(tempState.canChase || tempState.canAttack)
+            if(tempState.canChase || tempState.canAttack || tempState.CanFlee)
             {
                 tempState.currentTarget = Source.transform;
                 if(tempState.canChase)

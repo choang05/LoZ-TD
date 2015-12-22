@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using PicaVoxel;
@@ -35,16 +36,15 @@ public class DerbyCar : MonoBehaviour
     private float stuckTime = 0f;
     private float reverseTime = 0f;
 
- 
+
+  
 	void Start ()
 	{
-        // Setting the gravity manually because the demo games are shared in one project
-       // Physics.gravity = new Vector3(0f,-50f,0f);
-
         // Find this car's Exploder so we can destroy some voxels when it hits something
 	    exploder = transform.FindChild("Exploder").GetComponent<Exploder>();
 
 	    rigidBody = GetComponent<Rigidbody>();
+	    StartCoroutine(InitPhysics());
 
         // Set the car's tint color!
         Material m = new Material(transform.FindChild("Body").GetComponent<Volume>().Material);
@@ -59,8 +59,16 @@ public class DerbyCar : MonoBehaviour
 	        cameraStartPosition = mainCamera.transform.localPosition;
 	    }
 	}
-	
-	void Update ()
+
+    // This is a "hack" to get the wheelcolliders working correctly after the car's runtime-only volume meshes are regenerated.
+    IEnumerator InitPhysics()
+    {
+        transform.Translate(Vector3.up * 0.01f);
+
+        yield return new WaitForSeconds(2);
+    }
+
+    void Update ()
 	{
 	    float motor = 0f;
 	    float steering = 0f;
@@ -73,18 +81,7 @@ public class DerbyCar : MonoBehaviour
                 motor = maxMotorTorque* Input.GetAxis("Vertical");
                 steering = maxSteeringAngle* Input.GetAxis("Horizontal");
 
-             //   if (Input.GetAxis("Horizontal")<0f)
-	            //    steerAmount -= 0.1f;
-	            //else if (Input.GetAxis("Horizontal")>0f)
-	            //    steerAmount += 0.1f;
-	            //else if (steerAmount < 0f) steerAmount += 0.05f;
-	            //else if (steerAmount > 0f) steerAmount -= 0.05f;
-
-	            //if (Input.GetAxis("Vertical")>0f)
-	            //    rigidBody.AddForce(transform.forward*25f, ForceMode.Acceleration);
-	            //if (Input.GetAxis("Vertical")<0f)
-	            //    rigidBody.AddForce(-transform.forward*15f, ForceMode.Acceleration);
-
+         
                 // Do something with the camera
 	            mainCamera.transform.localPosition = Vector3.Slerp(mainCamera.transform.localPosition, cameraStartPosition + new Vector3(steerAmount*(rigidBody.velocity.magnitude*0.1f), 0f, 0f), Time.deltaTime * 10f);
                 mainCamera.transform.localRotation = Quaternion.RotateTowards(mainCamera.transform.localRotation, Quaternion.Euler(20, 0, steerAmount*5f), Time.deltaTime * 10f);
@@ -175,8 +172,8 @@ public class DerbyCar : MonoBehaviour
 
         // Steering
         //   steerAmount = Mathf.Clamp(steerAmount, -1f, 1f);
-        //transform.FindChild("WheelFL").localRotation = Quaternion.Euler(0, 0f + (steerAmount*10f), 0f);
-        //transform.FindChild("WheelFR").localRotation = Quaternion.Euler(0, 0f + (steerAmount*10f), 0f);
+        transform.FindChild("Wheels/WheelFL").localRotation = Quaternion.Euler(0, 0f + (steering), 0f);
+        transform.FindChild("Wheels/WheelFR").localRotation = Quaternion.Euler(0, 0f + (steering), 0f);
 
         //Check to see if the car has fallen over (greater than 80 degrees of tilt around Z)
         // If it has, wait 3 seconds before resetting the position

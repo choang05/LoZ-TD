@@ -544,23 +544,24 @@ namespace PicaVoxel
             bool[] corners = new bool[8];
             Vector3[] positions = new Vector3[8];
 
+            int doubleXsize = xSize * 2;
+            int doubleYsize = ySize * 2;
+            int doubleZsize = zSize * 2;
 
-            for (int z = 0; z < zSize; z++)
-                for (int y = 0; y < ySize; y++)
-                    for (int x = 0; x < xSize; x++)
+            for (int subz = 0; subz < doubleZsize; subz++)
+                for (int suby = 0; suby < doubleYsize; suby++)
+                    for (int subx = 0; subx < doubleXsize; subx++)
                     {
-
-                        //block = chunk.GetBlock(x, y, z);
                         int cubeIndex = 0;
 
-                        corners[0] = IsVoxelAtMarching(ref invoxels, x, y, z + 1, xOffset, yOffset, zOffset, ub0, ub1, ub2);
-                        corners[1] = IsVoxelAtMarching(ref invoxels, x + 1, y, z + 1, xOffset, yOffset, zOffset, ub0, ub1, ub2);
-                        corners[2] = IsVoxelAtMarching(ref invoxels, x + 1, y, z, xOffset, yOffset, zOffset, ub0, ub1, ub2);
-                        corners[3] = IsVoxelAtMarching(ref invoxels, x, y, z, xOffset, yOffset, zOffset, ub0, ub1, ub2);
-                        corners[4] = IsVoxelAtMarching(ref invoxels, x, y + 1, z + 1, xOffset, yOffset, zOffset, ub0, ub1, ub2);
-                        corners[5] = IsVoxelAtMarching(ref invoxels, x + 1, y + 1, z + 1, xOffset, yOffset, zOffset, ub0, ub1, ub2);
-                        corners[6] = IsVoxelAtMarching(ref invoxels, x + 1, y + 1, z, xOffset, yOffset, zOffset, ub0, ub1, ub2);
-                        corners[7] = IsVoxelAtMarching(ref invoxels, x, y + 1, z, xOffset, yOffset, zOffset, ub0, ub1, ub2);
+                        corners[0] = IsVoxelAtMarching(ref invoxels, subx, suby, subz + 1, xOffset, yOffset, zOffset, ub0, ub1, ub2);
+                        corners[1] = IsVoxelAtMarching(ref invoxels, subx + 1, suby, subz + 1, xOffset, yOffset, zOffset, ub0, ub1, ub2);
+                        corners[2] = IsVoxelAtMarching(ref invoxels, subx + 1, suby, subz, xOffset, yOffset, zOffset, ub0, ub1, ub2);
+                        corners[3] = IsVoxelAtMarching(ref invoxels, subx, suby, subz, xOffset, yOffset, zOffset, ub0, ub1, ub2);
+                        corners[4] = IsVoxelAtMarching(ref invoxels, subx, suby + 1, subz + 1, xOffset, yOffset, zOffset, ub0, ub1, ub2);
+                        corners[5] = IsVoxelAtMarching(ref invoxels, subx + 1, suby + 1, subz + 1, xOffset, yOffset, zOffset, ub0, ub1, ub2);
+                        corners[6] = IsVoxelAtMarching(ref invoxels, subx + 1, suby + 1, subz, xOffset, yOffset, zOffset, ub0, ub1, ub2);
+                        corners[7] = IsVoxelAtMarching(ref invoxels, subx, suby + 1, subz, xOffset, yOffset, zOffset, ub0, ub1, ub2);
 
                         if (corners[0])
                             cubeIndex += 1;
@@ -582,7 +583,7 @@ namespace PicaVoxel
                         if (cubeIndex == 0 || cubeIndex == 255)
                             continue;
 
-                        Vector3 worldOffset = (new Vector3(x, y, z));// + (Vector3.one * hs);
+                        Vector3 worldOffset = (new Vector3(subx, suby, subz));// + (Vector3.one * hs);
 
                         positions[0] = worldOffset + new Vector3(0, 0, 1);
                         positions[1] = worldOffset + new Vector3(1, 0, 1);
@@ -592,15 +593,6 @@ namespace PicaVoxel
                         positions[5] = worldOffset + new Vector3(1, 1, 1);
                         positions[6] = worldOffset + new Vector3(1, 1, 0);
                         positions[7] = worldOffset + new Vector3(0, 1, 0);
-
-                        //positions[0] = worldOffset + new Vector3(-hs, -hs, hs);
-                        //positions[1] = worldOffset + new Vector3(hs, -hs, hs);
-                        //positions[2] = worldOffset + new Vector3(hs, -hs, -hs);
-                        //positions[3] = worldOffset + new Vector3(-hs, -hs, -hs);
-                        //positions[4] = worldOffset + new Vector3(-hs, hs, hs);
-                        //positions[5] = worldOffset + new Vector3(hs, hs, hs);
-                        //positions[6] = worldOffset + new Vector3(hs, hs, -hs);
-                        //positions[7] = worldOffset + new Vector3(-hs, hs, -hs);
 
                         Vector3[] vertlist = new Vector3[12];
                         if (IsBitSet(edgeTable[cubeIndex], 1))
@@ -632,64 +624,122 @@ namespace PicaVoxel
                         {
                             int index = vertices.Count;
 
-                            vertices.Add(vertlist[triTable[cubeIndex][i]] * voxelSize);
-                            vertices.Add(vertlist[triTable[cubeIndex][i + 1]] * voxelSize);
-                            vertices.Add(vertlist[triTable[cubeIndex][i + 2]] * voxelSize);
-
-                            //float tec = (1f / 8f);
-                            //Vector2 uvBase;// = new Vector2 (0 * tec, 6 * tec);
-                            //if (block is Water)
-                            //{
-                            //    uvBase = new Vector2(0 * tec, 6 * tec);
-                            //}
-                            //else
-                            //{
-                            //    uvBase = new Vector2(0 * tec, 1 * tec);
-                            //}
-                            ////Vector2 uvBase = new Vector2 (0, 0);
-                            //uvs.Add(uvBase);
-                            //uvs.Add(uvBase + new Vector2(0, tec));
-                            //uvs.Add(uvBase + new Vector2(tec, tec));
+                            vertices.Add(vertlist[triTable[cubeIndex][i]] * voxelSize * 0.5f);
+                            vertices.Add(vertlist[triTable[cubeIndex][i + 1]] * voxelSize * 0.5f);
+                            vertices.Add(vertlist[triTable[cubeIndex][i + 2]] * voxelSize * 0.5f);
 
                             indexes.Add(index + 2);
                             indexes.Add(index + 1);
                             indexes.Add(index + 0);
 
+                            // Convert to x,y,z position
+                            int x = Mathf.FloorToInt(((float)subx) / 2.0f);
+                            int y = Mathf.FloorToInt(((float)suby) / 2.0f);
+                            int z = Mathf.FloorToInt(((float)subz) / 2.0f);
+
+                            x = Mathf.Max(x, 0);
+                            y = Mathf.Max(y, 0);
+                            z = Mathf.Max(z, 0);
+                            
                             Color useColor = Color.red;
-                            if (invoxels[(x + xOffset) + (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + zOffset))].Active)
-                                useColor = invoxels[(x + xOffset) + (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + zOffset))].Color;
-                            else if (x+xOffset<ub0 && invoxels[(x+1 + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
-                                useColor = invoxels[(x+1 + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Color;
-                            else if (y + yOffset < ub1 && invoxels[(x + xOffset) + (ub0 + 1) * ((y + 1 + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
-                                useColor = invoxels[(x + xOffset) + (ub0 + 1) * ((y + 1 + yOffset) + (ub1 + 1) * (z + zOffset))].Color;
-                            else if (z + zOffset < ub2 && invoxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + 1 + zOffset))].Active)
-                                useColor = invoxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + 1+ zOffset))].Color;
+                            try
+                            {
+                                if (invoxels[(x + xOffset) + (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + zOffset))].Active)
+                                    useColor =
+                                        invoxels[(x + xOffset) + (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + zOffset))]
+                                            .Color;
+                                else if (x + xOffset < ub0 &&
+                                         invoxels[
+                                             (x + 1 + xOffset) + (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + zOffset))
+                                             ].Active)
+                                    useColor =
+                                        invoxels[
+                                            (x + 1 + xOffset) + (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + zOffset))]
+                                            .Color;
+                                else if (y + yOffset < ub1 &&
+                                         invoxels[
+                                             (x + xOffset) + (ub0 + 1)*((y + 1 + yOffset) + (ub1 + 1)*(z + zOffset))]
+                                             .Active)
+                                    useColor =
+                                        invoxels[
+                                            (x + xOffset) +
+                                            (ub0 + 1)*((y + 1 + yOffset) + (ub1 + 1)*(z + zOffset))].Color;
+                                else if (z + zOffset < ub2 &&
+                                         invoxels[
+                                             (x + xOffset) +
+                                             (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + 1 + zOffset))].Active)
+                                    useColor =
+                                        invoxels[
+                                            (x + xOffset) +
+                                            (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + 1 + zOffset))].Color;
 
-                            //else if (x + xOffset >0 && invoxels[((x - 1) + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
-                            //    useColor = invoxels[((x - 1) + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Color;
-                            //else if (y + yOffset >0 && invoxels[(x + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
-                            //    useColor = invoxels[(x + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * (z + zOffset))].Color;
-                            //else if (z + zOffset >0 && invoxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Active)
-                            //    useColor = invoxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Color;
+                                //else if (x + xOffset >0 && invoxels[((x - 1) + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
+                                //    useColor = invoxels[((x - 1) + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Color;
+                                //else if (y + yOffset >0 && invoxels[(x + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
+                                //    useColor = invoxels[(x + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * (z + zOffset))].Color;
+                                //else if (z + zOffset >0 && invoxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Active)
+                                //    useColor = invoxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Color;
 
-                            else if (x + xOffset < ub0 && y+yOffset<ub1 && invoxels[(x + 1 + xOffset) + (ub0 + 1) * ((y + 1 + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
-                                useColor = invoxels[(x + 1 + xOffset) + (ub0 + 1) * ((y + 1 + yOffset) + (ub1 + 1) * (z + zOffset))].Color;
-                            else if (x + xOffset < ub0 && z + zOffset < ub2 && invoxels[(x + 1 + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + 1 + zOffset))].Active)
-                                useColor = invoxels[(x + 1 + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + 1 + zOffset))].Color;
-                            else if (y + yOffset < ub1 && z + zOffset < ub2 && invoxels[(x + xOffset) + (ub0 + 1) * ((y + 1 + yOffset) + (ub1 + 1) * (z + 1 + zOffset))].Active)
-                                useColor = invoxels[(x + xOffset) + (ub0 + 1) * ((y + 1 + yOffset) + (ub1 + 1) * (z + 1 + zOffset))].Color;
+                                else if (x + xOffset < ub0 && y + yOffset < ub1 &&
+                                         invoxels[
+                                             (x + 1 + xOffset) +
+                                             (ub0 + 1)*((y + 1 + yOffset) + (ub1 + 1)*(z + zOffset))].Active)
+                                    useColor =
+                                        invoxels[
+                                            (x + 1 + xOffset) +
+                                            (ub0 + 1)*((y + 1 + yOffset) + (ub1 + 1)*(z + zOffset))]
+                                            .Color;
+                                else if (x + xOffset < ub0 && z + zOffset < ub2 &&
+                                         invoxels[
+                                             (x + 1 + xOffset) +
+                                             (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + 1 + zOffset))]
+                                             .Active)
+                                    useColor =
+                                        invoxels[
+                                            (x + 1 + xOffset) +
+                                            (ub0 + 1)*((y + yOffset) + (ub1 + 1)*(z + 1 + zOffset))]
+                                            .Color;
+                                else if (y + yOffset < ub1 && z + zOffset < ub2 &&
+                                         invoxels[
+                                             (x + xOffset) +
+                                             (ub0 + 1)*
+                                             ((y + 1 + yOffset) + (ub1 + 1)*(z + 1 + zOffset))]
+                                             .Active)
+                                    useColor =
+                                        invoxels[
+                                            (x + xOffset) +
+                                            (ub0 + 1)*
+                                            ((y + 1 + yOffset) + (ub1 + 1)*(z + 1 + zOffset))]
+                                            .Color;
 
-                            //else if (x + xOffset > 0 && y + yOffset > 0 && invoxels[((x - 1) + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
-                            //    useColor = invoxels[((x - 1) + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * (z + zOffset))].Color;
+                                //else if (x + xOffset > 0 && y + yOffset > 0 && invoxels[((x - 1) + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
+                                //    useColor = invoxels[((x - 1) + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * (z + zOffset))].Color;
 
-                            //else if (x + xOffset > 0 && z + zOffset > 0 && invoxels[((x - 1) + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Active)
-                            //    useColor = invoxels[((x - 1) + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Color;
+                                //else if (x + xOffset > 0 && z + zOffset > 0 && invoxels[((x - 1) + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Active)
+                                //    useColor = invoxels[((x - 1) + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Color;
 
-                            //else if (y + yOffset >0 && z + zOffset >0 && invoxels[(x + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Active)
-                            //    useColor = invoxels[(x + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Color;
+                                //else if (y + yOffset >0 && z + zOffset >0 && invoxels[(x + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Active)
+                                //    useColor = invoxels[(x + xOffset) + (ub0 + 1) * (((y - 1) + yOffset) + (ub1 + 1) * ((z - 1) + zOffset))].Color;
 
-                            else if (x + xOffset < ub0 && y + yOffset < ub1 && z + yOffset < ub2 && invoxels[(x + 1 + xOffset) + (ub0 + 1) * ((y + 1 + yOffset) + (ub1 + 1) * (z +1 + zOffset))].Active)
-                                useColor = invoxels[(x + 1 + xOffset) + (ub0 + 1) * ((y + 1 + yOffset) + (ub1 + 1) * (z + 1 + zOffset))].Color;
+
+                                else if (x + xOffset < ub0 && y + yOffset < ub1 &&
+                                         z + zOffset < ub2 &&
+                                         invoxels[
+                                             (x + 1 + xOffset) +
+                                             (ub0 + 1)*
+                                             ((y + 1 + yOffset) + (ub1 + 1)*(z + 1 + zOffset))]
+                                             .Active)
+                                    useColor =
+                                        invoxels[
+                                            (x + 1 + xOffset) +
+                                            (ub0 + 1)*
+                                            ((y + 1 + yOffset) + (ub1 + 1)*(z + 1 + zOffset))
+                                            ].Color;
+                            }
+                            catch (Exception)
+                            {
+                                Debug.Log("x: " + x + " y: " + y + " z: " + z + " ub0: " + ub0 + " ub1: " + ub1 + " ub2: " +ub2);
+                            }
 
                             colors.Add(useColor);
                             colors.Add(useColor);
@@ -733,12 +783,21 @@ namespace PicaVoxel
             return (p);
         }
 
-        static bool IsVoxelAtMarching(ref Voxel[] voxels, int x, int y, int z, int xOffset, int yOffset, int zOffset, int ub0, int ub1, int ub2)
+        static bool IsVoxelAtMarching(ref Voxel[] voxels, int subx, int suby, int subz, int xOffset, int yOffset, int zOffset, int ub0, int ub1, int ub2)
         {
-            if (x + xOffset < 0 || y + yOffset < 0 || z + zOffset < 0 || x + xOffset > ub0 || y + yOffset > ub1 || z + zOffset > ub2) return false;
-            if (x + xOffset == 0 && voxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active) return false;
-            if (y + yOffset == 0 && voxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active) return false;
-            if (z + zOffset == 0 && voxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active) return false;
+            // Convert to x,y,z position
+            int x = Mathf.FloorToInt(((float)subx) / 2.0f);
+            int y = Mathf.FloorToInt(((float)suby) / 2.0f);
+            int z = Mathf.FloorToInt(((float)subz) / 2.0f);
+
+            if (x + xOffset < 0 || y + yOffset < 0 || z + zOffset < 0 || x + xOffset > ub0 || y + yOffset > ub1 || z + zOffset > ub2)
+                return false;
+            if (x + xOffset == 0 && voxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
+                return false;
+            if (y + yOffset == 0 && voxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
+                return false;
+            if (z + zOffset == 0 && voxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
+                return false;
             // if (x == 0 || y == 0 || z == 0) return false;
             if (voxels[(x + xOffset) + (ub0 + 1) * ((y + yOffset) + (ub1 + 1) * (z + zOffset))].Active)
             {

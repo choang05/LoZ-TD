@@ -15,26 +15,28 @@ public class AIStatePattern : MonoBehaviour
     // Attributes
     public TargetsInSight _lookArea;
     public TargetsInSight _attackArea;
-    public bool canChase;
-    public bool canAttack;
-    [HideInInspector] public float thinkInterval = .15f;    // How often unit will 'think' and do commands. 
-    [HideInInspector] public float thinkTimer = 0;
-    [Range(0, 360)] public int sightRange = 170;            // Widest angle unit is able to see targets up to 360 degrees
-    public int wanderRadius = 10;                           // Max distance unit will wander from its origin
-    [HideInInspector] public Vector3 wanderOrigin;          // The original position the unit will return wander from within its radius.
-    public float idleMaxTime = 3;                           // Max time that unit will idle during IdleState
-    public float chaseMaxTime = 5;                          // Max time that unit will chase the target before returning its base state.
-    public Transform[] wayPoints;                           // Used for patrolling types
-    public Vector3 offset = new Vector3(0, .5f, 0);
-    public MeshRenderer meshRendererFlag;                   // Gameobject used for debugging states
+    private bool canFlee;                                    //  Does the entity flee?
+    public bool canChase;                                   //  Does the entity Chase?
+    public bool canAttack;                                  //  Does the entity Attack?
+    [HideInInspector] public float thinkInterval = .15f;    //  How often unit will 'think' and do commands. 
+    [Range(0, 360)] public int sightRange = 170;            //  Widest angle unit is able to see targets up to 360 degrees
+    public int wanderRadius = 10;                           //  Max distance unit will wander from its origin
+    [Range(0, 1)] public float fleeHealthThreshold;         //  The minimum hp percentage for the entity to consider fleeing
+    [HideInInspector] public Vector3 wanderOrigin;          //  The original position the unit will return wander from within its radius.
+    public float idleMaxTime = 3;                           //  Max time that unit will idle during IdleState
+    public float chaseMaxTime = 5;                          //  Max time that unit will chase the target before returning its base state.
+    //[HideInInspector]
+    public Transform currentTarget;
+    public Transform[] wayPoints;                           //  Patrol type: used for patrols between waypoints 
+    [HideInInspector] public Renderer meshRendererFlag;     //  Gameobject used for visual debugging states
 
-    [HideInInspector] public Transform currentTarget;
     [HideInInspector] public IEnemyState currentState;
     [HideInInspector] public PatrolState patrolState;
     [HideInInspector] public ChaseState chaseState;
     [HideInInspector] public WanderState wanderState;
     [HideInInspector] public IdleState idleState;
     [HideInInspector] public AttackState attackState;
+    [HideInInspector] public FleeState fleeState;
 
     // Scripts
     [HideInInspector] public NavMeshAgent navMeshAgent;
@@ -44,6 +46,11 @@ public class AIStatePattern : MonoBehaviour
     // Animation
     private Animator animator;
     static int forwardHash = Animator.StringToHash("Forward");
+    static int hitTriggerHash = Animator.StringToHash("HitTrigger");
+
+    //  Audio
+    private AudioSource audioSource;
+    public AudioClip[] soundArray;
 
     private void Awake()
     {
@@ -52,42 +59,60 @@ public class AIStatePattern : MonoBehaviour
         wanderState = new WanderState(this);
         idleState = new IdleState(this);
         attackState = new AttackState(this);
+        fleeState = new FleeState(this);
 
         navMeshAgent = GetComponent<NavMeshAgent>();
         _enemyAttack = GetComponent<EnemyAttack>();
         _health = GetComponent<Health>();
         animator = GetComponentInChildren<Animator>();
+        audioSource = GetComponent<AudioSource>();
+
+        meshRendererFlag = transform.FindChild("StatePatternFlag").GetComponent<Renderer>();
     }
 
     // Use this for initialization
     void Start()
     {
+        if (fleeHealthThreshold > 0)
+            canFlee = true;
+
         wanderOrigin = transform.position;
 
         //Determine initial state
         ToBaseState();
+
+        StartCoroutine(Thinking());
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator Thinking()
     {
-        if(!_health.IsDead)
+        while(!_health.IsDead)
         {
-            thinkTimer += Time.deltaTime;
-            if(thinkTimer >= thinkInterval)
+            yield return new WaitForSeconds(thinkInterval);
+
+            //  Health check every frame 
+            if(canFlee && currentState != fleeState && _health.HPPercentage <= fleeHealthThreshold && currentTarget)
             {
-                currentState.UpdateState();
-                thinkTimer = 0;
+                currentState = fleeState;
+                currentState.StartState();
             }
-            if(currentState == idleState || currentState == attackState)
+
+            currentState.UpdateState();
+            
+            if (currentState == idleState || currentState == attackState)
                 animator.SetFloat(forwardHash, 0);
-            else if(currentState == chaseState || currentState == patrolState || currentState == wanderState)
+            else
                 animator.SetFloat(forwardHash, 1f);
         }
-        else if (navMeshAgent.remainingDistance > 0)
-        {
-            navMeshAgent.Stop();
-        }
+        navMeshAgent.Stop();
+    }
+
+    public void ProcessHit(GameObject Source)
+    {
+        animator.SetTrigger(hitTriggerHash);
+        //  Audio
+        audioSource.pitch = Random.Range(.5f, 1.5f);
+        audioSource.PlayOneShot(soundArray[0], 2);
     }
 
     public void ToBaseState()
@@ -100,5 +125,13 @@ public class AIStatePattern : MonoBehaviour
             currentState = patrolState;
 
         currentState.StartState();
+    }
+
+
+    // Actuators and Mutators
+    public bool CanFlee
+    {
+        get { return canFlee; }
+        set { canFlee = value; }
     }
 }

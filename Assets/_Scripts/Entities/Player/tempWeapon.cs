@@ -12,19 +12,24 @@ public class tempWeapon : MonoBehaviour
         Range,
         Magic
     }
+    //  Equipment
+    public GameObject meleeSword;
+    public GameObject meleeShield;
+    public GameObject rangeBow;
+    public GameObject magicStaff;
 
+    //  Scripts
     private BaseCharacter _baseCharacter;
 
     private PlayerMelee _playerMelee;
     private PlayerRange _playerRange;
     private PlayerMagic _playerMagic;
 
+    private PlayerStamina _playerStamina;
+    private PlayerMana _playerMana;
+
     public Transform leftObjectNode;
     public Transform rightObjectNode;
-    public GameObject meleeSword;
-    public GameObject meleeShield;
-    public GameObject rangeBow;
-    public GameObject magicStaff;
 
     // Animation
     private Animator animator;
@@ -33,9 +38,9 @@ public class tempWeapon : MonoBehaviour
     static int isMagicHash = Animator.StringToHash("isMagic");
 
     //  UI
-    public GameObject ShieldBar;
-    public GameObject StaminaBar;
-    public GameObject ManaBar;
+    private GameObject ShieldBar;
+    private GameObject StaminaBar;
+    private GameObject ManaBar;
 
     void Awake()
     {
@@ -43,6 +48,16 @@ public class tempWeapon : MonoBehaviour
         _playerMelee = GetComponent<PlayerMelee>();
         _playerRange = GetComponent<PlayerRange>();
         _playerMagic = GetComponent<PlayerMagic>();
+
+        _playerStamina = GetComponent<PlayerStamina>();
+        _playerMana = GetComponent<PlayerMana>();
+
+        //leftObjectNode = GameObject.Find("L_ObjectNode").transform;
+        //rightObjectNode = GameObject.Find("R_ObjectNode").transform;
+
+        ShieldBar = GameObject.Find("ShieldBar");
+        StaminaBar = GameObject.Find("StaminaBar");
+        ManaBar = GameObject.Find("ManaBar");
 
         animator = transform.GetComponentInChildren<Animator>();
     }
@@ -85,6 +100,9 @@ public class tempWeapon : MonoBehaviour
             _playerMagic.enabled = false;
             _playerMelee.enabled = true;
 
+            _playerStamina.enabled = false;
+            _playerMana.enabled = false;
+
             GameObject tempSword = Instantiate(meleeSword, rightObjectNode.position, Quaternion.identity) as GameObject;
             tempSword.transform.SetParent(rightObjectNode.transform);
             tempSword.transform.localRotation = Quaternion.identity;
@@ -92,6 +110,7 @@ public class tempWeapon : MonoBehaviour
             GameObject tempShield = Instantiate(meleeShield, leftObjectNode.position, Quaternion.identity) as GameObject;
             tempShield.transform.SetParent(leftObjectNode.transform);
             tempShield.transform.localRotation = Quaternion.identity;
+
             //  Animation
             animator.SetBool(isRangeHash, false);
             animator.SetBool(isMagicHash, false);
@@ -110,9 +129,13 @@ public class tempWeapon : MonoBehaviour
             _playerMelee.enabled = false;
             _playerRange.enabled = true;
 
+            _playerStamina.enabled = true;
+            _playerMana.enabled = false;
+
             GameObject tempBow = Instantiate(rangeBow, leftObjectNode.position, Quaternion.identity) as GameObject;
             tempBow.transform.SetParent(leftObjectNode.transform);
             tempBow.transform.localRotation = Quaternion.identity;
+
             //  Animation
             animator.SetBool(isMagicHash, false);
             animator.SetBool(isMeleeHash, false);
@@ -131,10 +154,14 @@ public class tempWeapon : MonoBehaviour
             _playerRange.enabled = false;
             _playerMagic.enabled = true;
 
-            GameObject tempStaff = Instantiate(magicStaff, leftObjectNode.position, Quaternion.identity) as GameObject;
-            tempStaff.transform.SetParent(leftObjectNode.transform);
+            _playerStamina.enabled = false;
+            _playerMana.enabled = true;
+
+            GameObject tempStaff = Instantiate(magicStaff, rightObjectNode.position, Quaternion.identity) as GameObject;
+            tempStaff.transform.SetParent(rightObjectNode.transform);
             tempStaff.transform.localRotation = Quaternion.identity;
 
+            //  Animation
             animator.SetBool(isMeleeHash, false);
             animator.SetBool(isRangeHash, false);
             animator.SetBool(isMagicHash, true);

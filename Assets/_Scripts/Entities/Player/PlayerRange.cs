@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using PathologicalGames;
 
 public class PlayerRange : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class PlayerRange : MonoBehaviour
     [SerializeField]
     private bool isRolling = false;                     //  Is player currently rolling
     [SerializeField]
-    private int rollSpeedMultiplier;                    //  Is player currently rolling
+    private int rollDistanceMultiplier;                 //  The amount of distance covered under a second
     [SerializeField] [Range(0, 1)]
     private float chargeMoveSpeedMultiplier = 1;        //  The applied movement speed multiplier during charge
     [SerializeField] [Range(0, 1)]
@@ -26,7 +27,7 @@ public class PlayerRange : MonoBehaviour
     [SerializeField] private float rollStaminaDrain;    //  Amount of stamina drained for a roll
     [SerializeField] private int projectileSpeed;       //  How fast does the projectile travel
     [SerializeField] private int maxBounces;            //  How many times can the projectile bounce
-    [SerializeField] private GameObject projectile;     //  Prefab of the projectile
+    [SerializeField] private Transform projectile;     //  Prefab of the projectile
 
     // Scripts
     private PlayerMotor _playerMotor;
@@ -37,9 +38,11 @@ public class PlayerRange : MonoBehaviour
     // Animation
     private Animator animator;
     //AnimatorStateInfo stateInfo;
-    static int attackTriggerHash = Animator.StringToHash("Attack");
     static int isChargingHash = Animator.StringToHash("isChargingShot");
     static int isRollingHash = Animator.StringToHash("isRolling");
+
+    //  Audio
+    private AudioSource audioSource;
 
     void OnEnable()
     {
@@ -56,13 +59,14 @@ public class PlayerRange : MonoBehaviour
         _playerStamina = GetComponent<PlayerStamina>();
         _baseCharacter = GetComponent<BaseCharacter>();
         animator = transform.GetComponentInChildren<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
         //  if the shoot button is being held down, start charge state
-        if (Input.GetButtonDown("Fire1") && !isCharging)
+        if (Input.GetButtonDown("X") && !isCharging)
         {
             isCharging = true;
             //  Motor
@@ -71,7 +75,7 @@ public class PlayerRange : MonoBehaviour
             animator.SetBool(isChargingHash, true);
         }
         //  if the button is no longer held, start the shoot animation
-        else if ((Input.GetButtonUp("Fire1") && isCharging))
+        else if ((Input.GetButtonUp("X") && isCharging))
         {
             isCharging = false;
             isAttacking = true;
@@ -92,16 +96,20 @@ public class PlayerRange : MonoBehaviour
                 bonusCritChance += chargeCritChanceMultiplier * Time.deltaTime;
                 _playerStamina.AdjustStamina(-chargeStaminaDrainRate * Time.deltaTime);
             }
+
             //  If the player pushes the roll button, isn't charging, isn't attacking, and isn't rolling
-            if(Input.GetButtonDown("Fire2") && !isCharging && !isAttacking && !isRolling)
+            if(Input.GetButtonDown("A"))
             {
-                isRolling = true;
-                _playerMotor.CanMove = false;
-                _playerMotor.CanRotate = false;
-                _playerStamina.AdjustStamina(-rollStaminaDrain);
-                StartCoroutine(RollMove(rollSpeedMultiplier));
-                //  Animation
-                animator.SetBool(isRollingHash, isRolling);
+                if(!isCharging && !isAttacking && !isRolling && _playerStamina.CurrentStamina >= rollStaminaDrain)
+                {
+                    isRolling = true;
+                    _playerMotor.CanMove = false;
+                    _playerMotor.CanRotate = false;
+                    _playerStamina.AdjustStamina(-rollStaminaDrain);
+                    StartCoroutine(RollMove());
+                    //  Animation
+                    animator.SetBool(isRollingHash, isRolling);
+                }
             }
         }
     }
@@ -110,9 +118,20 @@ public class PlayerRange : MonoBehaviour
     public void ApplyAttack()
     {
         // Spawn projectile object
-        GameObject tempProjectile = Instantiate(projectile, transform.position + transform.up + transform.forward, transform.rotation) as GameObject;
-        tempProjectile.GetComponent<Arrow>().SetSource(gameObject, maxBounces, projectileSpeed, CriticalChance.CheckCritical(_baseCharacter.CriticalChance + bonusCritChance), Tags.Enemy);
+        Transform tempProjectile = PoolManager.Pools["Projectiles"].Spawn(projectile);
+        tempProjectile.transform.position = transform.position + transform.up + transform.forward;
+        tempProjectile.rotation = transform.rotation;
+        Arrow _arrow = tempProjectile.GetComponent<Arrow>();
+        _arrow.Source = gameObject;
+        _arrow.MaxBounces = maxBounces;
+        _arrow.ProjectileSpeed = projectileSpeed;
+        _arrow.IsCrit = CriticalChance.CheckCritical(_baseCharacter.CriticalChance + bonusCritChance);
+        _arrow.TargetTag = Tags.Enemy;
+
         bonusCritChance = 0;  //  Reset the bonus crit chance
+
+        audioSource.pitch = Random.Range(.5f, 1.5f);
+        audioSource.PlayOneShot(SoundManager.soundArray[3], 2);
     }
 
     public void ResetAttack()
@@ -123,17 +142,17 @@ public class PlayerRange : MonoBehaviour
     }
     public void ResetRoll()
     {
-        isRolling = false;
         _playerMotor.CanMove = true;
         _playerMotor.CanRotate = true;
+        isRolling = false;
         animator.SetBool(isRollingHash, isRolling);
     }
 
-    IEnumerator RollMove(int rollSpeed)
+    IEnumerator RollMove()
     {
         while(isRolling)
         {
-            _playerMotor.CharacterController.SimpleMove(transform.TransformDirection(Vector3.forward) * rollSpeed * Time.deltaTime);
+            _playerMotor.CharacterController.SimpleMove(transform.TransformDirection(Vector3.forward) * rollDistanceMultiplier * Time.deltaTime);
             yield return null;
         }
     }
@@ -148,5 +167,15 @@ public class PlayerRange : MonoBehaviour
     {
         get { return isCharging; }
         //set { isCharging = value; }
+    }
+    public int MaxBounces
+    {
+        get { return maxBounces; }
+        set { maxBounces = value; }
+    }
+    public int ProjectileSpeed
+    {
+        get { return projectileSpeed; }
+        set { projectileSpeed = value; }
     }
 }

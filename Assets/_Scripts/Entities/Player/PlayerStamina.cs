@@ -52,7 +52,6 @@ public class PlayerStamina : MonoBehaviour
             staminaBarSlider.value = 100;
             staminaBarText.text = "100%";
         }
-
     }
 
     public void AdjustStamina(float amount)

@@ -119,6 +119,24 @@ namespace PicaVoxel
                         selfShadeIntensity, mode);
                 });
 #else
+#if UNITY_WEBGL && !UNITY_EDITOR
+
+                // WEBGL platform does not support threading (yet)
+                Generate(ref voxels, voxelSize, overlapAmount, xOffset, yOffset, zOffset, xSize, ySize, zSize, ub0, ub1, ub2,
+                            selfShadeIntensity, mode);
+                SetMesh();
+
+                if (colliderMode != mode &&transform.parent.parent.parent.GetComponent<Volume>().CollisionMode != CollisionMode.None)
+                {
+                    Generate(ref voxels, voxelSize, overlapAmount, xOffset, yOffset, zOffset, xSize, ySize, zSize, ub0, ub1, ub2,
+                             selfShadeIntensity, mode);
+                }
+
+                if (transform.parent.parent.parent.GetComponent<Volume>().CollisionMode != CollisionMode.None)
+                    SetColliderMesh();
+
+
+#else
 #if UNITY_EDITOR
                 ThreadPool.QueueUserWorkItem(delegate
                 {
@@ -131,6 +149,7 @@ namespace PicaVoxel
                     GenerateThreaded(ref voxels, voxelSize, overlapAmount, xOffset, yOffset, zOffset, xSize, ySize, zSize,ub0, ub1, ub2,
                         selfShadeIntensity, mode);
                 });
+#endif
 #endif
 #endif
             }

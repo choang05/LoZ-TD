@@ -16,4 +16,6 @@ public interface IEnemyState
     void ToIdleState();
 
     void ToAttackState();
+
+    void ToFleeState();
 }

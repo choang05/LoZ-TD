@@ -50,6 +50,12 @@ public class AttackState : IEnemyState
     {
         Debug.Log("Can't transition to same state");
     }
+    
+    public void ToFleeState()
+    {
+        myObject.currentState = myObject.fleeState;
+        myObject.currentState.StartState();
+    }
 
 
     private void Attack()
@@ -58,7 +64,7 @@ public class AttackState : IEnemyState
         {
             //Debug.Log("Attack!");
             myObject.transform.LookAt(myObject.currentTarget);
-            myObject._enemyAttack.Attack();
+            myObject._enemyAttack.StartAttackAnimation();
         }
         else
         {

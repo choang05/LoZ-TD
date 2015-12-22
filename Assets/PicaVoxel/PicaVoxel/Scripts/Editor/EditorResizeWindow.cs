@@ -55,9 +55,7 @@ namespace PicaVoxel
         public void OnGUI()
         {
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField(
-                "Volume Size: " + voxelObject.name + " (" + voxelObject.XSize + "," + voxelObject.YSize + "," +
-                voxelObject.ZSize + ")", new GUIStyle() {fontStyle = FontStyle.Bold});
+            EditorUtility.SkinnedLabel("Volume Size: " + voxelObject.name + " (" + voxelObject.XSize + "," + voxelObject.YSize + "," + voxelObject.ZSize + ")");
             EditorGUILayout.Space();
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("X:", new[] {GUILayout.Width(30)});
@@ -77,9 +75,9 @@ namespace PicaVoxel
             fillVoxels = EditorGUILayout.ToggleLeft(" Fill any added space", fillVoxels);
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField(
+            EditorUtility.SkinnedLabel(
                 "Chunk Size: " + voxelObject.name + " (" + voxelObject.XChunkSize + "," + voxelObject.YChunkSize + "," +
-                voxelObject.ZChunkSize + ")", new GUIStyle() { fontStyle = FontStyle.Bold });
+                voxelObject.ZChunkSize + ")");
             EditorGUILayout.Space();
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("X:", new[] { GUILayout.Width(30) });

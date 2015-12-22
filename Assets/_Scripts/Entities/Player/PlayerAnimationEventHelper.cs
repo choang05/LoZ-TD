@@ -6,7 +6,7 @@ public class PlayerAnimationEventHelper : MonoBehaviour
     PlayerMelee _playerMelee;
     PlayerRange _playerRange;
     PlayerMagic _playerMagic;
-
+    
     void Awake()
     {
         _playerMelee = GetComponentInParent<PlayerMelee>();
@@ -16,21 +16,33 @@ public class PlayerAnimationEventHelper : MonoBehaviour
 
     public void ProcessAttackEvent()
     {
-        if(_playerMelee.isActiveAndEnabled)
+        if(_playerMelee.enabled)
             _playerMelee.ApplyAttack();
-        else if(_playerRange.isActiveAndEnabled)
+        else if(_playerRange.enabled)
             _playerRange.ApplyAttack();
     }
+
     public void ProcessAttackReset()
     {
-        if (_playerMelee.isActiveAndEnabled)
+        if (_playerMelee.enabled)
             _playerMelee.ResetAttack();
-        else if (_playerRange.isActiveAndEnabled)
+        else if (_playerRange.enabled)
             _playerRange.ResetAttack();
     }
+
     public void ProcessResetRoll()
     {
-        if (_playerRange.isActiveAndEnabled)
+        if (_playerRange.enabled)
             _playerRange.ResetRoll();
+    }
+    public void ProcessCast_Fireball()
+    {
+        if (_playerMagic.enabled)
+            _playerMagic.CastFireball();
+    }
+    public void ProcessCast_Boulder()
+    {
+        if (_playerMagic.enabled)
+            _playerMagic.CastBoulder();
     }
 }

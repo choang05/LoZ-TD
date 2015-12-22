@@ -76,7 +76,10 @@ namespace PicaVoxel
         private void Update()
         {
 #if UNITY_EDITOR
-            if(!Application.isPlaying)
+            if (chunks!=null && chunks[0, 0, 0] != null)
+                ParentVolume.ChunkLayer = chunks[0, 0, 0].gameObject.layer;
+
+            if (!Application.isPlaying)
                 return;
 #endif
             UpdateChunks(false);
@@ -357,6 +360,8 @@ namespace PicaVoxel
                 //chunk.GetComponent<MeshCollider>().sharedMesh = m;
                 chunk.GetComponent<MeshCollider>().convex = (ParentVolume.CollisionMode ==
                                                              CollisionMode.MeshColliderConvex);
+                chunk.GetComponent<MeshCollider>().sharedMaterial = ParentVolume.PhysicMaterial;
+                chunk.GetComponent<MeshCollider>().isTrigger = ParentVolume.CollisionTrigger;
             }
 
             UpdateAllChunks();
@@ -456,6 +461,8 @@ namespace PicaVoxel
             {
                 GetChunkReferences();
             }
+
+            
 
             int progress = 0;
 
@@ -561,11 +568,13 @@ namespace PicaVoxel
                             Instantiate(ChunkPrefab, new Vector3(x, y, z)*ParentVolume.VoxelSize, Quaternion.identity)
                                 as GameObject;
                         newChunk.name = "Chunk (" + chunkX + "," + chunkY + "," + chunkZ + ")";
-                        newChunk.layer = ParentVolume.gameObject.layer;
+                        newChunk.layer = ParentVolume.ChunkLayer;
                         newChunk.transform.parent = chunkContainer;
                         newChunk.transform.localPosition = new Vector3(x, y, z)*ParentVolume.VoxelSize;
                         newChunk.transform.rotation = transform.rotation;
                         newChunk.transform.localScale = transform.localScale;
+                        newChunk.GetComponent<MeshRenderer>().shadowCastingMode = ParentVolume.CastShadows;
+                        newChunk.GetComponent<MeshRenderer>().receiveShadows = ParentVolume.ReceiveShadows;
                         chunks[chunkX, chunkY, chunkZ] = newChunk.GetComponent<Chunk>();
 
                         z += ParentVolume.ZChunkSize;

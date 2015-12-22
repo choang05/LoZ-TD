@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using PicaVoxel;
+using UnityEngine.SceneManagement;
 
 public class InvadersPlayerShip : MonoBehaviour
 {
@@ -41,6 +42,6 @@ public class InvadersPlayerShip : MonoBehaviour
 
     void Reset()
     {
-        Application.LoadLevel(0);
+        SceneManager.LoadScene(0);
     }
 }

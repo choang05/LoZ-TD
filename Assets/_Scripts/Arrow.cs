@@ -1,38 +1,49 @@
 ﻿using UnityEngine;
 using System.Collections;
+using PathologicalGames;
 
 public class Arrow : MonoBehaviour 
 {
 
     // Attributes
-	[SerializeField] private int projectileSpeed;
+	[SerializeField] private int projectileSpeed = 0;
     [SerializeField] private int lifeDuration = 3;
     [SerializeField] private LayerMask collisionMask;
 
 	private int maxBounces = 0;
 	private int bounceCounter = 0;
-    private string targetableTag;
+    private string targetTag;
 	private GameObject source;
-	private float damage;
+	private float damage = 0;
     private bool isCrit = false;
 	private bool didHitTarget = false;
 
     //  Particles
-    private ParticleSystem particleSystem;
+    private ParticleSystem _particleSystem;
 
     void Awake()
     {
-        particleSystem = GetComponentInChildren<ParticleSystem>();
+        _particleSystem = GetComponentInChildren<ParticleSystem>();
     }
 
-	void Start()
-	{
-        Destroy(gameObject, lifeDuration);
-	}
-	
-	// Update is called once per frame
-    
-	void Update () 
+    //  PoolManager
+    public void OnSpawned()  
+    {
+        // Start the timer as soon as this instance is spawned.
+        StartCoroutine(DespawnDelay());
+    }
+    public void OnDespawned()
+    {
+        // Handle destruction visuals, like explosions and sending damage
+        // information to nearby objects
+        // ...
+        didHitTarget = false;
+        bounceCounter = 0;
+    }
+
+    // Update is called once per frame
+
+    void Update () 
 	{
 		if(!didHitTarget)
 		{
@@ -52,23 +63,14 @@ public class Arrow : MonoBehaviour
 
             if (bounceCounter > maxBounces)
             {
-                Destroy(gameObject);
+                PoolManager.Pools["Projectiles"].Despawn(this.transform);
             }
 		}
-	}
-    
-	public void SetSource(GameObject Source, int MaxBounces, int Speed, bool IsCrit, string targetTag)
-	{
-        source = Source;
-		maxBounces = MaxBounces;
-        projectileSpeed = Speed;
-        isCrit = IsCrit;
-        targetableTag = targetTag;
 	}
 
     void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag(targetableTag) && !didHitTarget)
+        if(other.transform.CompareTag(targetTag) && !didHitTarget)
         {
             didHitTarget = true;
 
@@ -77,8 +79,8 @@ public class Arrow : MonoBehaviour
             int damage = source.GetComponent<BaseCharacter>().Attack;
             CombatModifier.ProcessAttack(source, gameObject, damage, isCrit, other.gameObject);
 
-            particleSystem.Stop();
-            Destroy(gameObject, lifeDuration);
+            //_particleSystem.Stop();
+            StartCoroutine(DespawnDelay());
         }
     }
 
@@ -89,18 +91,40 @@ public class Arrow : MonoBehaviour
 
         transform.SetParent(null);
 
-        particleSystem.Play();
-        Destroy(gameObject, lifeDuration);
+        //_particleSystem.Play();
+        StartCoroutine(DespawnDelay());
     }
 
-    public int ProjectileSpeed
+    IEnumerator DespawnDelay()
     {
-        get { return projectileSpeed; }
-        set { projectileSpeed = value; }
+        yield return new WaitForSeconds(lifeDuration);
+        PoolManager.Pools["Projectiles"].Despawn(this.transform);
+    }
+
+    // Actuators and Mutators
+    public GameObject Source
+    {
+        get { return source; }
+        set { source = value; }
     }
     public int MaxBounces
     {
         get { return maxBounces; }
         set { maxBounces = value; }
+    }
+    public int ProjectileSpeed
+    {
+        get { return projectileSpeed; }
+        set { projectileSpeed = value; }
+    }
+    public bool IsCrit
+    {
+        get { return isCrit; }
+        set { isCrit = value; }
+    }
+    public string TargetTag
+    {
+        get { return targetTag; }
+        set { targetTag = value; }
     }
 }

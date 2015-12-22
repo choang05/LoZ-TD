@@ -43,11 +43,12 @@ namespace PicaVoxel
                 string fn = UnityEditor.EditorUtility.OpenFilePanel("Import VOX", "", "vox");
                 if (!string.IsNullOrEmpty(fn))
                 {
-                   
-
                     MagicaVoxelImporter.MagicaVoxelImport(fn, objectName, voxelSize, centerPivot);
-
                     Close();
+
+
+
+
                 }
             }
             if (GUILayout.Button("Cancel")) Close();

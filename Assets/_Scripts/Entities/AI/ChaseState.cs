@@ -68,21 +68,30 @@ public class ChaseState : IEnemyState
         //Debug.Log(chaseTimer);
     }
 
+    public void ToFleeState()
+    {
+        myObject.currentState = myObject.fleeState;
+        myObject.currentState.StartState();
+    }
+
     private void Chase()
     {
         if (myObject.currentTarget && !myObject.currentTarget.GetComponent<Health>().IsDead)
         {
-            distanceFromTarget = Vector3.Distance(myObject.transform.position, myObject.currentTarget.position);
-            if (distanceFromTarget <= myObject.navMeshAgent.stoppingDistance)
+            if(!myObject._enemyAttack.IsAttacking)
             {
-                myObject.transform.LookAt(myObject.currentTarget);
-                if (myObject.canAttack)
-                    ToAttackState();
-            }
-            else
-            {
-                myObject.navMeshAgent.destination = myObject.currentTarget.position;
-                myObject.navMeshAgent.Resume();
+                distanceFromTarget = Vector3.Distance(myObject.transform.position, myObject.currentTarget.position);
+                if (distanceFromTarget <= myObject.navMeshAgent.stoppingDistance)
+                {
+                    myObject.transform.LookAt(myObject.currentTarget);
+                    if (myObject.canAttack)
+                        ToAttackState();
+                }
+                else
+                {
+                    myObject.navMeshAgent.destination = myObject.currentTarget.position;
+                    myObject.navMeshAgent.Resume();
+                }
             }
         }
         else

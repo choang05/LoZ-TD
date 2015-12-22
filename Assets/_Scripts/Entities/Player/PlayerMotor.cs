@@ -10,14 +10,13 @@ public class PlayerMotor : MonoBehaviour
     [SerializeField] private bool canRotate = true;
 	[SerializeField] private float moveSpeed = 0; // Character movement speed.
     [SerializeField] private float maxMoveSpeed = 0;
-    private float gravity = 20.0f; // Gravity for the character.
 	private Vector3 moveDirection = Vector3.zero; // The move direction of the player.
 
     private Camera myCamera;
 	private CharacterController _characterController;
 
     // Animation
-	private Animator animator;
+    private Animator animator;
     static int forwardHash = Animator.StringToHash("Forward");
     static int moveSpeedHash = Animator.StringToHash("MoveSpeed");
 
@@ -28,8 +27,8 @@ public class PlayerMotor : MonoBehaviour
 		    myCamera = Camera.main; // Get main camera as the camera will not always be a child GameObject.
 		}
         // Get the player character controller.
-        _characterController = transform.GetComponent<CharacterController>();			
-		// Get the player animator in child.			
+        _characterController = transform.GetComponent<CharacterController>();
+        // Get the player animator in child.			
         animator = transform.GetComponentInChildren<Animator>();
     }
 
@@ -44,7 +43,7 @@ public class PlayerMotor : MonoBehaviour
 		float zMovement = Input.GetAxis("Vertical");// The vertical movement.
 
         // Are we able to move and grounded, yes then move.
-        if (canMove && IsGrounded())
+        if (canMove)
         {
             moveDirection = new Vector3(xMovement, 0, zMovement);
         }
@@ -56,7 +55,7 @@ public class PlayerMotor : MonoBehaviour
 
         if (CanRotate && (xMovement != 0 || zMovement != 0))
         {
-            transform.forward = moveDirection.normalized;
+            transform.forward = moveDirection;
         }
 
         // Keep the max magnitude of the movement to 1, this keeps additive diagonal speed the same as vertical/horizontal speed.
@@ -64,9 +63,7 @@ public class PlayerMotor : MonoBehaviour
 
         if(canMove)
         {
-            // Apply gravity.
-            moveDirection.y -= gravity * Time.deltaTime;
-            _characterController.Move(moveDirection * moveSpeed * Time.deltaTime);	
+            _characterController.SimpleMove(moveDirection * moveSpeed * Time.deltaTime);	
         }
 
         // Animation
@@ -81,11 +78,6 @@ public class PlayerMotor : MonoBehaviour
             animator.SetFloat(moveSpeedHash, moveSpeed / maxMoveSpeed);
         }
     }
-	
-	// Check if the player is grounded.
-	bool IsGrounded () {
-		return _characterController.isGrounded;
-	}
 
     public void ResetMotor()
     {

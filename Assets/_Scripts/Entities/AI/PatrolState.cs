@@ -51,6 +51,12 @@ public class PatrolState : IEnemyState
         myObject.currentState.StartState();
     }
 
+    public void ToFleeState()
+    {
+        myObject.currentState = myObject.fleeState;
+        myObject.currentState.StartState();
+    }
+
     private void Look()
     {
         if (myObject._lookArea.GetTargetsInView().Count != 0)

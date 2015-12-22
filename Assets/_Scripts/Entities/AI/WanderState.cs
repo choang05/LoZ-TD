@@ -2,10 +2,8 @@
 using System.Collections;
 
 public class WanderState : IEnemyState
-
 {
     private readonly AIStatePattern myObject;
-    private float thinkTimer;
 
     public WanderState(AIStatePattern statePattern)
     {
@@ -23,11 +21,6 @@ public class WanderState : IEnemyState
         Wander();
     }
 
-    public void OnTriggerEnter(Collider other)
-    {
-
-    }
-
     public void ToPatrolState()
     {
         myObject.currentState = myObject.patrolState;
@@ -42,7 +35,6 @@ public class WanderState : IEnemyState
 
     public void ToWanderState()
     {
-        myObject.navMeshAgent.destination = GetRandomLocation(myObject.transform.position, myObject.wanderRadius, -1);
         Debug.Log("Can't transition to same state");
     }
 
@@ -55,6 +47,12 @@ public class WanderState : IEnemyState
     public void ToAttackState()
     {
         myObject.currentState = myObject.attackState;
+        myObject.currentState.StartState();
+    }
+
+    public void ToFleeState()
+    {
+        myObject.currentState = myObject.fleeState;
         myObject.currentState.StartState();
     }
 

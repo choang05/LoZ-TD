@@ -12,6 +12,7 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] private int projectileSpeed;
     [SerializeField] private float attackCooldown = 2;
     private bool isAttackOnCooldown = false;
+    private bool isAttacking = false;
 
     //  Scripts
     private BaseCharacter _baseCharacter;
@@ -20,9 +21,7 @@ public class EnemyAttack : MonoBehaviour
 
     //  Animations
     private Animator animator;
-    AnimatorStateInfo stateInfo;
-    static int attackTriggerHash = Animator.StringToHash("Attack");
-    static int attackTypeHash = Animator.StringToHash("MeleeAttackType");
+    static int attackTriggerHash = Animator.StringToHash("AttackTrigger");
 
     void Awake()
     {
@@ -30,24 +29,13 @@ public class EnemyAttack : MonoBehaviour
         animator = transform.GetComponentInChildren<Animator>();
     }
 
-    // Use this for initialization
-    void Start ()
+    public void StartAttackAnimation()
     {
-        
-    }
-
-    public void Attack()
-    {
-        if(!isAttackOnCooldown && canAttack)
+        if(canAttack && !isAttackOnCooldown && !isAttacking)
         {
-            if (hasMeleeAttack)
-                StartCoroutine(MeleeAttackRoutine());
-            else if (hasRangeAttack)
-                StartCoroutine(RangeAttackRoutine());
-
-
-            if (attackCooldown != 0)
-                StartCoroutine(doCooldown(attackCooldown));
+            isAttacking = true;
+            //  Animation
+            animator.SetTrigger(attackTriggerHash);
         }
         else
         {
@@ -55,51 +43,55 @@ public class EnemyAttack : MonoBehaviour
         }
     }
 
-    IEnumerator doCooldown(float cooldownTime)
+    public void Attack()
     {
-        isAttackOnCooldown = true;
-        yield return new WaitForSeconds(cooldownTime);
-        isAttackOnCooldown = false;
-    }
+        StartCoroutine(doCooldown(attackCooldown));
 
-    IEnumerator MeleeAttackRoutine()
-    {
-        float animationSpeed = 1;
-        float animationDuration = .833f / animationSpeed;
-        float eventDelay = .25f / animationSpeed;
-
-        //  Animation
-        animator.SetInteger(attackTypeHash, Random.Range(0, 2));
-        animator.SetTrigger(attackTriggerHash);
-
-        yield return new WaitForSeconds(eventDelay);   // animation event delay
-
-        // Do attack script
         List<GameObject> targets = _attackArea.GetTargetsInView();
         for (int i = 0; i < targets.Count; i++)
         {
-            if(targets[i] != null)
-                CombatModifier.ProcessAttack(gameObject, null, _baseCharacter.Attack, CriticalChance.CheckCritical(_baseCharacter.CriticalChance), targets[i]);
+            CombatModifier.ProcessAttack(gameObject, null, _baseCharacter.Attack, CriticalChance.CheckCritical(_baseCharacter.CriticalChance), targets[i]);
         }
-        yield return new WaitForSeconds(animationDuration - eventDelay);
+    }
+
+    IEnumerator doCooldown(float cooldownTime)
+    {
+        if(!isAttackOnCooldown)
+            isAttackOnCooldown = true;
+        yield return new WaitForSeconds(cooldownTime);
+        if(isAttackOnCooldown)
+            isAttackOnCooldown = false;
+    }
+
+    public void ResetAttack()
+    {
+        isAttacking = false;
     }
 
     IEnumerator RangeAttackRoutine()
     {
-        float animationSpeed = 1;
-        float animationDuration = .833f / animationSpeed;
-        float eventDelay = .25f / animationSpeed;
 
         //  Animation
-        animator.SetInteger(attackTypeHash, Random.Range(0, 2));
-        animator.SetTrigger(attackTriggerHash);
+        //animator.SetInteger(attackTypeHash, Random.Range(0, 2));
+        //animator.SetTrigger(attackTriggerHash);
 
-        yield return new WaitForSeconds(eventDelay);   // animation event delay
+        yield return new WaitForSeconds(0);   // animation event delay
 
         // Spawn projectile object
         GameObject tempProjectile = Instantiate(projectile, transform.position + transform.up + transform.forward, transform.rotation) as GameObject;
-        tempProjectile.GetComponent<Arrow>().SetSource(gameObject, 1, projectileSpeed, CriticalChance.CheckCritical(_baseCharacter.CriticalChance), Tags.Player);
-            
-        yield return new WaitForSeconds(animationDuration - eventDelay);
+        Arrow _arrow = tempProjectile.GetComponent<Arrow>();
+        _arrow.Source = gameObject;
+        _arrow.ProjectileSpeed = projectileSpeed;
+        _arrow.IsCrit = CriticalChance.CheckCritical(_baseCharacter.CriticalChance);
+        _arrow.TargetTag = Tags.Player;
+        
+        yield return new WaitForSeconds(0);
+    }
+
+    // Actuators and Mutators
+    public bool IsAttacking
+    {
+        get { return isAttacking; }
+        //set { isAttacking = value; }
     }
 }

@@ -67,6 +67,23 @@ namespace PicaVoxel
             assetLoadRetries++;
             assetsLoaded = true;
 
+            // Add our volume tag if not present
+            SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+            SerializedProperty tagsProp = tagManager.FindProperty("tags");
+            bool found = false;
+            for (int i = 0; i < tagsProp.arraySize; i++)
+            {
+                SerializedProperty t = tagsProp.GetArrayElementAtIndex(i);
+                if (t.stringValue.Equals("PicaVoxelVolume")) { found = true; break; }
+            }
+            if (!found)
+            {
+                tagsProp.InsertArrayElementAtIndex(0);
+                SerializedProperty n = tagsProp.GetArrayElementAtIndex(0);
+                n.stringValue = "PicaVoxelVolume";
+            }
+            tagManager.ApplyModifiedProperties();
+
             var guids = AssetDatabase.FindAssets("PicaVoxel", null);
             foreach (var guid in guids)
             {
@@ -102,6 +119,13 @@ namespace PicaVoxel
                 if (!Buttons.ContainsKey(asset.name)) Buttons.Add(asset.name, (Texture2D) asset);
             }
         }
+
+        public static void SkinnedLabel(string text)
+        {
+            EditorGUILayout.LabelField(text, new GUIStyle() {  fontStyle = FontStyle.Bold, normal = new GUIStyleState() {textColor = (EditorGUIUtility.isProSkin ? new Color(0.7f,0.7f,0.7f) : Color.black) } });
+        }
     }
+
+    
 
 }

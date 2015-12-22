@@ -6,7 +6,7 @@ public class IdleState : IEnemyState
 {
     private readonly AIStatePattern myObject;
     private float idleTimer;
-    private float randomIdletime;
+    private float randomIdleTime;
 
     public IdleState(AIStatePattern statePatternEnemy)
     {
@@ -16,7 +16,8 @@ public class IdleState : IEnemyState
     public void StartState()
     {
         myObject.meshRendererFlag.material.color = Color.cyan;
-        randomIdletime = Random.Range(1, myObject.idleMaxTime);
+        randomIdleTime = Random.Range(1, myObject.idleMaxTime);
+        idleTimer = 0;
     }
 
     public void UpdateState()
@@ -54,6 +55,12 @@ public class IdleState : IEnemyState
         myObject.currentState.StartState();
     }
 
+    public void ToFleeState()
+    {
+        myObject.currentState = myObject.fleeState;
+        myObject.currentState.StartState();
+    }
+
     private void Look()
     {
         if (myObject._lookArea.GetTargetsInView().Count != 0)
@@ -70,7 +77,7 @@ public class IdleState : IEnemyState
 
         idleTimer += Time.deltaTime + myObject.thinkInterval;
 
-        if (idleTimer >= randomIdletime)
+        if (idleTimer >= randomIdleTime)
         {
             idleTimer = 0;
             myObject.ToBaseState();

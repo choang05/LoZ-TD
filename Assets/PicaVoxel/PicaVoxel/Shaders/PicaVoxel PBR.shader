@@ -1,12 +1,13 @@
-// Shader created with Shader Forge v1.18 
+// Shader created with Shader Forge v1.26 
 // Shader Forge (c) Neat Corporation / Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
-/*SF_DATA;ver:1.18;sub:START;pass:START;ps:flbk:,iptp:0,cusa:False,bamd:0,lico:1,lgpr:1,limd:3,spmd:1,trmd:0,grmd:0,uamb:True,mssp:True,bkdf:True,hqlp:False,rprd:True,enco:False,rmgx:True,rpth:0,hqsc:True,nrmq:1,nrsp:0,vomd:0,spxs:False,tesm:0,culm:0,bsrc:0,bdst:1,dpts:2,wrdp:True,dith:0,rfrpo:True,rfrpn:Refraction,coma:15,ufog:True,aust:True,igpj:False,qofs:0,qpre:1,rntp:1,fgom:False,fgoc:False,fgod:False,fgor:False,fgmd:0,fgcr:0.5,fgcg:0.5,fgcb:0.5,fgca:1,fgde:0.01,fgrn:0,fgrf:300,stcl:False,stva:128,stmr:255,stmw:255,stcp:6,stps:0,stfa:0,stfz:0,ofsf:0,ofsu:0,f2p0:False;n:type:ShaderForge.SFN_Final,id:2865,x:32719,y:32712,varname:node_2865,prsc:2|diff-6849-RGB,spec-358-OUT,gloss-1813-OUT;n:type:ShaderForge.SFN_Slider,id:358,x:32250,y:32780,ptovrint:False,ptlb:Metallic,ptin:_Metallic,varname:node_358,prsc:2,glob:False,taghide:False,taghdr:False,tagprd:False,tagnsco:False,tagnrm:False,min:0,cur:0,max:1;n:type:ShaderForge.SFN_Slider,id:1813,x:32250,y:32882,ptovrint:False,ptlb:Gloss,ptin:_Gloss,varname:_Metallic_copy,prsc:2,glob:False,taghide:False,taghdr:False,tagprd:False,tagnsco:False,tagnrm:False,min:0,cur:0,max:1;n:type:ShaderForge.SFN_VertexColor,id:6849,x:31974,y:32671,varname:node_6849,prsc:2;proporder:358-1813;pass:END;sub:END;*/
+/*SF_DATA;ver:1.26;sub:START;pass:START;ps:flbk:PicaVoxel/PicaVoxel Diffuse,iptp:0,cusa:False,bamd:0,lico:1,lgpr:1,limd:3,spmd:1,trmd:0,grmd:0,uamb:True,mssp:True,bkdf:True,hqlp:False,rprd:True,enco:False,rmgx:True,rpth:0,vtps:0,hqsc:True,nrmq:1,nrsp:0,vomd:0,spxs:False,tesm:0,olmd:1,culm:0,bsrc:0,bdst:1,dpts:2,wrdp:True,dith:0,rfrpo:True,rfrpn:Refraction,coma:15,ufog:True,aust:True,igpj:False,qofs:0,qpre:1,rntp:1,fgom:False,fgoc:False,fgod:False,fgor:False,fgmd:0,fgcr:0.5,fgcg:0.5,fgcb:0.5,fgca:1,fgde:0.01,fgrn:0,fgrf:300,stcl:False,stva:128,stmr:255,stmw:255,stcp:6,stps:0,stfa:0,stfz:0,ofsf:0,ofsu:0,f2p0:False,fnsp:False,fnfb:False;n:type:ShaderForge.SFN_Final,id:2865,x:32719,y:32712,varname:node_2865,prsc:2|diff-3915-OUT,spec-358-OUT,gloss-1813-OUT;n:type:ShaderForge.SFN_Slider,id:358,x:32250,y:32780,ptovrint:False,ptlb:Metallic,ptin:_Metallic,varname:node_358,prsc:2,glob:False,taghide:False,taghdr:False,tagprd:False,tagnsco:False,tagnrm:False,min:0,cur:0,max:1;n:type:ShaderForge.SFN_Slider,id:1813,x:32250,y:32882,ptovrint:False,ptlb:Gloss,ptin:_Gloss,varname:_Metallic_copy,prsc:2,glob:False,taghide:False,taghdr:False,tagprd:False,tagnsco:False,tagnrm:False,min:0,cur:0,max:1;n:type:ShaderForge.SFN_VertexColor,id:6849,x:31974,y:32671,varname:node_6849,prsc:2;n:type:ShaderForge.SFN_Multiply,id:3915,x:32547,y:32496,varname:node_3915,prsc:2|A-6849-RGB,B-480-RGB;n:type:ShaderForge.SFN_Color,id:480,x:32316,y:32597,ptovrint:False,ptlb:Tint,ptin:_Tint,varname:node_480,prsc:2,glob:False,taghide:False,taghdr:False,tagprd:False,tagnsco:False,tagnrm:False,c1:1,c2:1,c3:1,c4:1;proporder:358-1813-480;pass:END;sub:END;*/
 
 Shader "PicaVoxel/PicaVoxel PBR" {
     Properties {
         _Metallic ("Metallic", Range(0, 1)) = 0
         _Gloss ("Gloss", Range(0, 1)) = 0
+        _Tint ("Tint", Color) = (1,1,1,1)
     }
     SubShader {
         Tags {
@@ -35,10 +36,11 @@ Shader "PicaVoxel/PicaVoxel PBR" {
             #pragma multi_compile DIRLIGHTMAP_OFF DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
             #pragma multi_compile DYNAMICLIGHTMAP_OFF DYNAMICLIGHTMAP_ON
             #pragma multi_compile_fog
-            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
+            #pragma exclude_renderers gles 
             #pragma target 3.0
             uniform float _Metallic;
             uniform float _Gloss;
+            uniform float4 _Tint;
             struct VertexInput {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
@@ -80,7 +82,7 @@ Shader "PicaVoxel/PicaVoxel PBR" {
                 o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
                 o.posWorld = mul(_Object2World, v.vertex);
                 float3 lightColor = _LightColor0.rgb;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = mul(UNITY_MATRIX_MVP, v.vertex );
                 UNITY_TRANSFER_FOG(o,o.pos);
                 TRANSFER_VERTEX_TO_FRAGMENT(o)
                 return o;
@@ -88,7 +90,6 @@ Shader "PicaVoxel/PicaVoxel PBR" {
             float4 frag(VertexOutput i) : COLOR {
                 i.normalDir = normalize(i.normalDir);
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.bitangentDir, i.normalDir);
-/////// Vectors:
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
                 float3 normalDirection = i.normalDir;
                 float3 viewReflectDirection = reflect( -viewDirection, normalDirection );
@@ -133,13 +134,16 @@ Shader "PicaVoxel/PicaVoxel PBR" {
                 d.boxMin[1] = unity_SpecCube1_BoxMin;
                 d.probePosition[1] = unity_SpecCube1_ProbePosition;
                 d.probeHDR[1] = unity_SpecCube1_HDR;
-                UnityGI gi = UnityGlobalIllumination (d, 1, gloss, normalDirection);
+                Unity_GlossyEnvironmentData ugls_en_data;
+                ugls_en_data.roughness = 1.0 - gloss;
+                ugls_en_data.reflUVW = viewReflectDirection;
+                UnityGI gi = UnityGlobalIllumination(d, 1, normalDirection, ugls_en_data );
                 lightDirection = gi.light.dir;
                 lightColor = gi.light.color;
 ////// Specular:
                 float NdotL = max(0, dot( normalDirection, lightDirection ));
                 float LdotH = max(0.0,dot(lightDirection, halfDirection));
-                float3 diffuseColor = i.vertexColor.rgb; // Need this for specular when using metallic
+                float3 diffuseColor = (i.vertexColor.rgb*_Tint.rgb); // Need this for specular when using metallic
                 float specularMonochrome;
                 float3 specularColor;
                 diffuseColor = DiffuseAndSpecularFromMetallic( diffuseColor, _Metallic, specularColor, specularMonochrome );
@@ -149,7 +153,7 @@ Shader "PicaVoxel/PicaVoxel PBR" {
                 float VdotH = max(0.0,dot( viewDirection, halfDirection ));
                 float visTerm = SmithBeckmannVisibilityTerm( NdotL, NdotV, 1.0-gloss );
                 float normTerm = max(0.0, NDFBlinnPhongNormalizedTerm(NdotH, RoughnessToSpecPower(1.0-gloss)));
-                float specularPBL = max(0, (NdotL*visTerm*normTerm) * unity_LightGammaCorrectionConsts_PIDiv4 );
+                float specularPBL = max(0, (NdotL*visTerm*normTerm) * (UNITY_PI / 4) );
                 float3 directSpecular = 1 * pow(max(0,dot(halfDirection,normalDirection)),specPow)*specularPBL*lightColor*FresnelTerm(specularColor, LdotH);
                 half grazingTerm = saturate( gloss + specularMonochrome );
                 float3 indirectSpecular = (gi.indirect.specular);
@@ -194,10 +198,11 @@ Shader "PicaVoxel/PicaVoxel PBR" {
             #pragma multi_compile DIRLIGHTMAP_OFF DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
             #pragma multi_compile DYNAMICLIGHTMAP_OFF DYNAMICLIGHTMAP_ON
             #pragma multi_compile_fog
-            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
+            #pragma exclude_renderers gles 
             #pragma target 3.0
             uniform float _Metallic;
             uniform float _Gloss;
+            uniform float4 _Tint;
             struct VertexInput {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
@@ -228,7 +233,7 @@ Shader "PicaVoxel/PicaVoxel PBR" {
                 o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
                 o.posWorld = mul(_Object2World, v.vertex);
                 float3 lightColor = _LightColor0.rgb;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = mul(UNITY_MATRIX_MVP, v.vertex );
                 UNITY_TRANSFER_FOG(o,o.pos);
                 TRANSFER_VERTEX_TO_FRAGMENT(o)
                 return o;
@@ -236,7 +241,6 @@ Shader "PicaVoxel/PicaVoxel PBR" {
             float4 frag(VertexOutput i) : COLOR {
                 i.normalDir = normalize(i.normalDir);
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.bitangentDir, i.normalDir);
-/////// Vectors:
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
                 float3 normalDirection = i.normalDir;
                 float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
@@ -253,7 +257,7 @@ Shader "PicaVoxel/PicaVoxel PBR" {
 ////// Specular:
                 float NdotL = max(0, dot( normalDirection, lightDirection ));
                 float LdotH = max(0.0,dot(lightDirection, halfDirection));
-                float3 diffuseColor = i.vertexColor.rgb; // Need this for specular when using metallic
+                float3 diffuseColor = (i.vertexColor.rgb*_Tint.rgb); // Need this for specular when using metallic
                 float specularMonochrome;
                 float3 specularColor;
                 diffuseColor = DiffuseAndSpecularFromMetallic( diffuseColor, _Metallic, specularColor, specularMonochrome );
@@ -263,7 +267,7 @@ Shader "PicaVoxel/PicaVoxel PBR" {
                 float VdotH = max(0.0,dot( viewDirection, halfDirection ));
                 float visTerm = SmithBeckmannVisibilityTerm( NdotL, NdotV, 1.0-gloss );
                 float normTerm = max(0.0, NDFBlinnPhongNormalizedTerm(NdotH, RoughnessToSpecPower(1.0-gloss)));
-                float specularPBL = max(0, (NdotL*visTerm*normTerm) * unity_LightGammaCorrectionConsts_PIDiv4 );
+                float specularPBL = max(0, (NdotL*visTerm*normTerm) * (UNITY_PI / 4) );
                 float3 directSpecular = attenColor * pow(max(0,dot(halfDirection,normalDirection)),specPow)*specularPBL*lightColor*FresnelTerm(specularColor, LdotH);
                 float3 specular = directSpecular;
 /////// Diffuse:
@@ -303,10 +307,11 @@ Shader "PicaVoxel/PicaVoxel PBR" {
             #pragma multi_compile DIRLIGHTMAP_OFF DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
             #pragma multi_compile DYNAMICLIGHTMAP_OFF DYNAMICLIGHTMAP_ON
             #pragma multi_compile_fog
-            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
+            #pragma exclude_renderers gles 
             #pragma target 3.0
             uniform float _Metallic;
             uniform float _Gloss;
+            uniform float4 _Tint;
             struct VertexInput {
                 float4 vertex : POSITION;
                 float2 texcoord1 : TEXCOORD1;
@@ -330,14 +335,13 @@ Shader "PicaVoxel/PicaVoxel PBR" {
                 return o;
             }
             float4 frag(VertexOutput i) : SV_Target {
-/////// Vectors:
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
                 UnityMetaInput o;
                 UNITY_INITIALIZE_OUTPUT( UnityMetaInput, o );
                 
                 o.Emission = 0;
                 
-                float3 diffColor = i.vertexColor.rgb;
+                float3 diffColor = (i.vertexColor.rgb*_Tint.rgb);
                 float specularMonochrome;
                 float3 specColor;
                 diffColor = DiffuseAndSpecularFromMetallic( diffColor, _Metallic, specColor, specularMonochrome );
@@ -349,6 +353,5 @@ Shader "PicaVoxel/PicaVoxel PBR" {
             ENDCG
         }
     }
-    FallBack "Diffuse"
-    CustomEditor "ShaderForgeMaterialInspector"
+    FallBack "PicaVoxel/PicaVoxel Diffuse"
 }

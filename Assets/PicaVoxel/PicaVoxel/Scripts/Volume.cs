@@ -12,6 +12,7 @@ using System.IO;
 using System.Threading;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Rendering;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 #if UNITY_EDITOR
@@ -86,16 +87,21 @@ namespace PicaVoxel
         public int CurrentFrame = 0;
         public List<Frame> Frames;
 
+        // Chunk generation settings
         public BoxCollider Hitbox;
         public MeshingMode MeshingMode;
         public MeshingMode MeshColliderMeshingMode;
         public bool GenerateMeshColliderSeparately = false;
         public Material Material;
-
-        public Color[] PaletteColors = new Color[25];
-
+        public PhysicMaterial PhysicMaterial;
+        public bool CollisionTrigger;
         public CollisionMode CollisionMode;
         public float SelfShadingIntensity = 0.2f;
+        public ShadowCastingMode CastShadows = ShadowCastingMode.On;
+        public bool ReceiveShadows = true;
+        public int ChunkLayer; 
+
+        public Color[] PaletteColors = new Color[25];
 
         public bool RuntimOnlyMesh = false;
 
@@ -313,6 +319,8 @@ namespace PicaVoxel
                 newPVFrame.GenerateNewFrame();
             Frames.Insert(where, newPVFrame);
             SetFrame(where);
+
+            UpdateFrameNames();
         }
 
         /// <summary>
@@ -326,6 +334,8 @@ namespace PicaVoxel
             Frames.RemoveAt(CurrentFrame);
             if (CurrentFrame >= Frames.Count) CurrentFrame = Frames.Count - 1;
             SetFrame(CurrentFrame);
+
+            UpdateFrameNames();
         }
 
         public void MoveFrameRight()
@@ -335,6 +345,8 @@ namespace PicaVoxel
             Frames[CurrentFrame] = Frames[CurrentFrame + 1];
             Frames[CurrentFrame + 1] = tempFrame;
             CurrentFrame++;
+
+            UpdateFrameNames();
         }
 
         public void MoveFrameLeft()
@@ -344,6 +356,8 @@ namespace PicaVoxel
             Frames[CurrentFrame] = Frames[CurrentFrame - 1];
             Frames[CurrentFrame - 1] = tempFrame;
             CurrentFrame--;
+
+            UpdateFrameNames();
         }
 
         /// <summary>
@@ -391,6 +405,14 @@ namespace PicaVoxel
                 frame.gameObject.SetActive(false);
             }
             Frames[CurrentFrame].gameObject.SetActive(true);
+        }
+
+        private void UpdateFrameNames()
+        {
+            foreach (Frame f in Frames)
+            {
+                f.gameObject.name = "Frame " + (Frames.IndexOf(f)+1);
+            }
         }
 
         /// <summary>

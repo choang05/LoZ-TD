@@ -64,32 +64,32 @@ namespace PicaVoxel
                     {
                         if (CollideNegativeX && parts[p].velocity.x < 0)
                         {
-                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(-parts[p].size, 0, 0));
+                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(-parts[p].GetCurrentSize(System), 0, 0));
                             if (v.HasValue && v.Value.Active) parts[p].velocity = new Vector3(-(parts[p].velocity.x * BounceMultiplier), parts[p].velocity.y, parts[p].velocity.z);
                         }
                         if (CollidePositiveX && parts[p].velocity.x > 0)
                         {
-                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(parts[p].size, 0, 0));
+                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(parts[p].GetCurrentSize(System), 0, 0));
                             if (v.HasValue && v.Value.Active) parts[p].velocity = new Vector3(-(parts[p].velocity.x * BounceMultiplier), parts[p].velocity.y, parts[p].velocity.z);
                         }
                         if (CollideNegativeY && parts[p].velocity.y < 0)
                         {
-                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(0,-parts[p].size, 0));
+                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(0,-parts[p].GetCurrentSize(System), 0));
                             if (v.HasValue && v.Value.Active) parts[p].velocity = new Vector3(parts[p].velocity.x, -(parts[p].velocity.y * BounceMultiplier), parts[p].velocity.z);
                         }
                         if (CollidePositiveY && parts[p].velocity.y > 0)
                         {
-                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(0,parts[p].size, 0));
+                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(0,parts[p].GetCurrentSize(System), 0));
                             if (v.HasValue && v.Value.Active) parts[p].velocity = new Vector3(parts[p].velocity.x, -(parts[p].velocity.y * BounceMultiplier), parts[p].velocity.z);
                         } 
                         if (CollideNegativeZ && parts[p].velocity.z < 0)
                         {
-                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(0,0,-parts[p].size));
+                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(0,0,-parts[p].GetCurrentSize(System)));
                             if (v.HasValue && v.Value.Active) parts[p].velocity = new Vector3(parts[p].velocity.x, parts[p].velocity.y, -(parts[p].velocity.z * BounceMultiplier));
                         }
                         if (CollidePositiveZ && parts[p].velocity.z > 0)
                         {
-                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(0,0,parts[p].size));
+                            Voxel? v = pvo.GetVoxelAtWorldPosition(parts[p].position + new Vector3(0,0,parts[p].GetCurrentSize(System)));
                             if (v.HasValue && v.Value.Active) parts[p].velocity = new Vector3(parts[p].velocity.x, parts[p].velocity.y, -(parts[p].velocity.z * BounceMultiplier));
                         }
 
@@ -103,7 +103,15 @@ namespace PicaVoxel
 
         public void SpawnSingle(Vector3 worldPos, Voxel voxel, float voxelSize, Vector3 velocity)
         {
-            System.Emit(worldPos, velocity, voxelSize, ParticleLifetime, voxel.Color);
+            System.Emit(new ParticleSystem.EmitParams()
+            {
+                position = worldPos,
+                velocity = velocity,
+                startSize = voxelSize,
+                startLifetime = ParticleLifetime,
+                startColor = voxel.Color
+            }, 1);
+            //worldPos, velocity, voxelSize, ParticleLifetime, voxel.Color)};
         }
 
         public void SpawnBatch(Batch batch, Func<Vector3, Vector3> velocityFunction)

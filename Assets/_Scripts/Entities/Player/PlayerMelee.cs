@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public class PlayerMelee : MonoBehaviour
 {
     // Attributes
-    [SerializeField] private bool canAttack = true;
+    [SerializeField]
+    private bool canAttack = true;
     [SerializeField]
     private bool isAttacking = false;
     [SerializeField]
@@ -19,20 +20,19 @@ public class PlayerMelee : MonoBehaviour
 
     // Scripts
     private PlayerMotor _playerMotor;
+    private PlayerShield _playerShield;
     private BaseCharacter _baseCharacter;
     private TargetsInSight _targetsInSight;
 
     // Animation
     private Animator animator;
     //AnimatorStateInfo stateInfo;
-    static int attackTriggerHash = Animator.StringToHash("Attack");
+    static int attackTriggerHash = Animator.StringToHash("AttackTrigger");
     static int attackTypeHash = Animator.StringToHash("MeleeAttackType");
     static int isBlockingHash = Animator.StringToHash("isBlocking");
 
     //  Audio
     private AudioSource audioSource;
-    public AudioClip perfectBlockSound;
-    public AudioClip normalBlockSound;
 
     void OnEnable()
     {
@@ -47,6 +47,7 @@ public class PlayerMelee : MonoBehaviour
     void Awake()
     {
         _playerMotor = GetComponent<PlayerMotor>();
+        _playerShield = GetComponent<PlayerShield>();
         _baseCharacter = GetComponent<BaseCharacter>();
         _targetsInSight = GetComponentInChildren<TargetsInSight>();
         animator = transform.GetComponentInChildren<Animator>();
@@ -60,7 +61,7 @@ public class PlayerMelee : MonoBehaviour
         // Attacking
         if(canAttack && !isAttacking)
         {
-            if (Input.GetButton("Fire1"))
+            if (Input.GetButton("X"))
             {
                 if (!isAttacking)
                 {
@@ -77,7 +78,7 @@ public class PlayerMelee : MonoBehaviour
         }
 
         // Blocking 
-        if (Input.GetButton("Fire2"))
+        if (Input.GetButton("A") && _playerShield.CurrentShieldHP > 0)
         {
             //Debug.Log("Blocking: " + isBlocking);
             if (!isBlocking && !isAttacking)
@@ -112,12 +113,16 @@ public class PlayerMelee : MonoBehaviour
     //  This method is called from the AnimationEventHelper when the correct frame in the attack has reached
     public void ApplyAttack()
     {
+
         List<GameObject> targets = _targetsInSight.GetTargetsInView();
         for (int i = 0; i < targets.Count; i++)
         {
             // Do attack script
             CombatModifier.ProcessAttack(gameObject, null, _baseCharacter.Attack, CriticalChance.CheckCritical(_baseCharacter.CriticalChance), targets[i]);
         }
+
+        audioSource.pitch = Random.Range(.5f, 1.5f);
+        audioSource.PlayOneShot(SoundManager.soundArray[2], 2);
     }
 
     public void ResetAttack()
@@ -139,13 +144,17 @@ public class PlayerMelee : MonoBehaviour
     public void ProcessBlock(int blockLevel)
     {
         audioSource.pitch = Random.Range(.5f, 1.5f);
+        //  Normal Block
         if (blockLevel == 1)
         {
-            audioSource.PlayOneShot(normalBlockSound, 1);
+            _playerShield.AdjustShieldHP(-25);
+            _playerShield.ResetCooldown();
+            audioSource.PlayOneShot(SoundManager.soundArray[1], 2);
         } 
+        //  Perfect block
         else if (blockLevel == 2)
         {
-            audioSource.PlayOneShot(perfectBlockSound, 1);
+            audioSource.PlayOneShot(SoundManager.soundArray[0], 2);
         }
 
     }

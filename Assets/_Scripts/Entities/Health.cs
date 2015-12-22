@@ -6,7 +6,7 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private float currentHP;
     [SerializeField] private float maxHP = 100;
-    [SerializeField] [Range(0, 100)] private int hpPercentage;
+    [SerializeField] [Range(0, 1)] private float hpPercentage;
     [SerializeField] private bool isDead = false;
 
     // UI
@@ -16,7 +16,8 @@ public class Health : MonoBehaviour
 
     //  Animation
     private Animator animator;
-    static int deathTriggerHash = Animator.StringToHash("DeadTrigger");
+    static int DeathTriggerHash = Animator.StringToHash("DeathTrigger");
+    static int isDeadHash = Animator.StringToHash("isDead");
 
     void Awake()
     {
@@ -27,7 +28,7 @@ public class Health : MonoBehaviour
     void Start()
 	{
 		currentHP = maxHP;
-		hpPercentage = (int)((currentHP / maxHP) * 100);
+		hpPercentage = currentHP / maxHP;
         healthBarSlider.value = hpPercentage;
         if(healthBarText != null)
             healthBarText.text = currentHP + "/" + maxHP;
@@ -50,14 +51,15 @@ public class Health : MonoBehaviour
 		if(!isDead)
 		{
 			currentHP += amount;
-			hpPercentage = (int)((currentHP / maxHP) * 100);
+			hpPercentage = currentHP / maxHP;
 		}
 
 		//If HP hits 0, declare it Dead if not already
 		if(currentHP <= 0 && !isDead)
 		{
 			isDead = true;
-            animator.SetTrigger(deathTriggerHash);
+            animator.SetTrigger(DeathTriggerHash);
+            animator.SetBool(isDeadHash, isDead);
         }
 
         // Update UI
@@ -81,7 +83,7 @@ public class Health : MonoBehaviour
         get { return maxHP; }
         set { maxHP = value; }
     }
-    public int HPPercentage
+    public float HPPercentage
     {
         get { return hpPercentage; }
         //set { hpPercentage = value; }
