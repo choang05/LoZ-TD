@@ -17,6 +17,8 @@ public class PlayerMelee : MonoBehaviour
     private int blockingAngle = 80; 
     [SerializeField] private float blockWindowTime = 1;
     private bool isPerfectBlock;
+    [SerializeField] [Range(0, 1)]
+    private float blockReductionMultiplier = 1;
 
     // Scripts
     private PlayerMotor _playerMotor;
@@ -33,6 +35,7 @@ public class PlayerMelee : MonoBehaviour
 
     //  Audio
     private AudioSource audioSource;
+    public AudioClip[] SoundArray;
 
     void OnEnable()
     {
@@ -61,7 +64,7 @@ public class PlayerMelee : MonoBehaviour
         // Attacking
         if(canAttack && !isAttacking)
         {
-            if (Input.GetButton("X"))
+            if (Input.GetButton("X2"))
             {
                 if (!isAttacking)
                 {
@@ -78,7 +81,7 @@ public class PlayerMelee : MonoBehaviour
         }
 
         // Blocking 
-        if (Input.GetButton("A") && _playerShield.CurrentShieldHP > 0)
+        if (Input.GetButton("A1") && _playerShield.CurrentShieldHP > 0)
         {
             //Debug.Log("Blocking: " + isBlocking);
             if (!isBlocking && !isAttacking)
@@ -120,9 +123,9 @@ public class PlayerMelee : MonoBehaviour
             // Do attack script
             CombatModifier.ProcessAttack(gameObject, null, _baseCharacter.Attack, CriticalChance.CheckCritical(_baseCharacter.CriticalChance), targets[i]);
         }
-
+        //  Audio
         audioSource.pitch = Random.Range(.5f, 1.5f);
-        audioSource.PlayOneShot(SoundManager.soundArray[2], 2);
+        audioSource.PlayOneShot(SoundArray[2], 2);
     }
 
     public void ResetAttack()
@@ -141,20 +144,23 @@ public class PlayerMelee : MonoBehaviour
     }
 
     //  Process the block after it has been triggered, block levels: 1 = normal block, 2 = perfect block
-    public void ProcessBlock(int blockLevel)
+    public void ProcessBlock(int blockLevel, int damage)
     {
-        audioSource.pitch = Random.Range(.5f, 1.5f);
         //  Normal Block
         if (blockLevel == 1)
         {
             _playerShield.AdjustShieldHP(-25);
             _playerShield.ResetCooldown();
-            audioSource.PlayOneShot(SoundManager.soundArray[1], 2);
+            //  Audio
+            audioSource.pitch = Random.Range(.5f, 1.5f);
+            audioSource.PlayOneShot(SoundArray[0], 2);
         } 
         //  Perfect block
         else if (blockLevel == 2)
         {
-            audioSource.PlayOneShot(SoundManager.soundArray[0], 2);
+            //  Audio
+            audioSource.pitch = Random.Range(.5f, 1.5f);
+            audioSource.PlayOneShot(SoundArray[1], 2);
         }
 
     }
@@ -184,5 +190,10 @@ public class PlayerMelee : MonoBehaviour
     {
         get { return isPerfectBlock; }
         //set { isPerfectBlock = value; }
+    }
+    public float BlockReductionMultiplier
+    {
+        get { return blockReductionMultiplier; }
+        set { blockReductionMultiplier = value; }
     }
 }

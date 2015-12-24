@@ -512,7 +512,7 @@ MonoBehaviour:
   ImportedFrom: 1
   ImportedFile: G:/Code/PicaVoxel/vox/Test_SirCarma.vox
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 128334
+  thisInstanceId: 146934
   Undone: 0
 --- !u!1 &398165943
 GameObject:
@@ -1631,7 +1631,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 128430
+  thisInstanceId: 147030
   Undone: 1
 --- !u!114 &1267352414
 MonoBehaviour:
@@ -2565,7 +2565,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 128498
+  thisInstanceId: 147098
   Undone: 1
 --- !u!4 &1825410968
 Transform:

@@ -803,7 +803,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 130064
+  thisInstanceId: 148664
   Undone: 0
 --- !u!4 &350031683
 Transform:
@@ -1286,7 +1286,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 130122
+  thisInstanceId: 148722
   Undone: 0
 --- !u!1 &806181857
 GameObject:
@@ -1717,7 +1717,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 130172
+  thisInstanceId: 148772
   Undone: 0
 --- !u!1 &1017505280
 GameObject:
@@ -2140,7 +2140,7 @@ MonoBehaviour:
   ImportedFrom: 1
   ImportedFile: G:/Code/PicaVoxel/vox/chr_sword.vox
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 130222
+  thisInstanceId: 148822
   Undone: 0
 --- !u!1 &1263519741
 GameObject:
@@ -2244,7 +2244,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 130228
+  thisInstanceId: 148828
   Undone: 0
 --- !u!1 &1280510706
 GameObject:
@@ -2477,7 +2477,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 130252
+  thisInstanceId: 148852
   Undone: 1
 --- !u!1 &1427574975
 GameObject:
@@ -2628,7 +2628,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 130262
+  thisInstanceId: 148862
   Undone: 0
 --- !u!114 &1465274518
 MonoBehaviour:
@@ -3029,7 +3029,7 @@ MonoBehaviour:
   ImportedFrom: 1
   ImportedFile: G:/Code/PicaVoxel/vox/chr_man.vox
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 130306
+  thisInstanceId: 148906
   Undone: 0
 --- !u!1 &1806897679
 GameObject:
@@ -3181,7 +3181,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 130318
+  thisInstanceId: 148918
   Undone: 0
 --- !u!1 &1921519059
 GameObject:

@@ -93,8 +93,8 @@ public class tempWeapon : MonoBehaviour
 
         if (weaponType == WeaponType.Melee)
         {
-            _baseCharacter.Attack = 20;
-            _baseCharacter.AttackDeviation = 15;
+            _baseCharacter.Attack = 0;
+            _baseCharacter.AttackDeviation = 0;
 
             _playerRange.enabled = false;
             _playerMagic.enabled = false;
@@ -122,8 +122,8 @@ public class tempWeapon : MonoBehaviour
         }
         else if(weaponType == WeaponType.Range)
         {
-            _baseCharacter.Attack = 15;
-            _baseCharacter.AttackDeviation = 3;
+            _baseCharacter.Attack = 0;
+            _baseCharacter.AttackDeviation = 0;
 
             _playerMagic.enabled = false;
             _playerMelee.enabled = false;
@@ -147,7 +147,7 @@ public class tempWeapon : MonoBehaviour
         }
         else if (weaponType == WeaponType.Magic)
         {
-            _baseCharacter.Attack = 30;
+            _baseCharacter.Attack = 0;
             _baseCharacter.AttackDeviation = 0;
 
             _playerMelee.enabled = false;

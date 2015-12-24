@@ -6,7 +6,6 @@ public class CriticalChance
     private static float randValue = 0;
     public static bool CheckCritical(float critChance)
     {
-
         if (critChance < 1)
         {
             randValue = Random.value;

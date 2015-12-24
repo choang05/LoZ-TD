@@ -4,9 +4,12 @@ using System.Collections;
 public class Fireball : MonoBehaviour
 {
     [SerializeField]
-    private int travelSpeed;
+    private LayerMask collisionMask;
+
     [SerializeField]
-    private float duration;
+    private int projectileSpeed;
+    [SerializeField]
+    private float projectileDuration;
     [SerializeField]
     private GameObject source;
     [SerializeField]
@@ -16,10 +19,23 @@ public class Fireball : MonoBehaviour
     [SerializeField]
     private string targetTag;
 	
+    void Start()
+    {
+        Destroy(gameObject, projectileDuration);
+    }
+
 	// Update is called once per frame
 	void Update ()
     {
-        transform.Translate(Vector3.forward * Time.deltaTime * travelSpeed);
+        transform.Translate(Vector3.forward * Time.deltaTime * projectileSpeed);
+
+        Ray ray = new Ray(transform.position, transform.forward);
+        RaycastHit hit;
+        // If the ray has hit something that is within our collision paramters
+        if (Physics.Raycast(ray, out hit, Time.deltaTime * projectileSpeed + .1f, collisionMask))
+        {
+            Destroy(gameObject);
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -32,15 +48,15 @@ public class Fireball : MonoBehaviour
     }
 
     // Actuators and Mutators
-    public int TravelSpeed
+    public int ProjectileSpeed
     {
-        get { return travelSpeed; }
-        set { travelSpeed = value; }
+        get { return projectileSpeed; }
+        set { projectileSpeed = value; }
     }
-    public float Duration
+    public float ProjectileDuration
     {
-        get { return duration; }
-        set { duration = value; }
+        get { return projectileDuration; }
+        set { projectileDuration = value; }
     }
     public GameObject Source
     {

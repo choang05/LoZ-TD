@@ -527,7 +527,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 154078
+  thisInstanceId: 172678
   Undone: 1
 --- !u!4 &336550858
 Transform:
@@ -645,7 +645,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 154086
+  thisInstanceId: 172686
   Undone: 0
 --- !u!4 &437176323
 Transform:
@@ -3118,7 +3118,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 154206
+  thisInstanceId: 172806
   Undone: 1
 --- !u!43 &1063806379
 Mesh:
@@ -3883,7 +3883,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 154270
+  thisInstanceId: 172870
   Undone: 1
 --- !u!114 &1466424834
 MonoBehaviour:

@@ -50,7 +50,7 @@ public class AIStatePattern : MonoBehaviour
 
     //  Audio
     private AudioSource audioSource;
-    public AudioClip[] soundArray;
+    public AudioClip[] SoundArray;
 
     private void Awake()
     {
@@ -107,12 +107,13 @@ public class AIStatePattern : MonoBehaviour
         navMeshAgent.Stop();
     }
 
-    public void ProcessHit(GameObject Source)
+    public void ProcessHit(GameObject Source, int damage)
     {
         animator.SetTrigger(hitTriggerHash);
         //  Audio
         audioSource.pitch = Random.Range(.5f, 1.5f);
-        audioSource.PlayOneShot(soundArray[0], 2);
+        audioSource.PlayOneShot(SoundArray[0], 1.5f);
+        audioSource.PlayOneShot(SoundArray[1], 2);
     }
 
     public void ToBaseState()

@@ -26,12 +26,20 @@ public class CombatModifier : MonoBehaviour
     public static void ProcessAttack(GameObject Source, GameObject secondarySource, float Damage, bool didCrit, GameObject Target)
     {
 
-        //  if the target is a player and if player blocked the attack
+        int adjustedDamage = ModifyDamage(Source, Damage, didCrit, Target);
+
+        //  if attack was blocked
         int blockLevel = GetBlockCheck(Source, Target);
-        if (blockLevel != 0)
+        if(blockLevel == 1)    //  If block was normal, adjust the attack damage
+        {
+            adjustedDamage = (int)(adjustedDamage * Target.GetComponent<PlayerMelee>().BlockReductionMultiplier);
+            //  Process the block
+            Target.GetComponent<PlayerMelee>().ProcessBlock(blockLevel, adjustedDamage);
+        }
+        if (blockLevel == 2)    // if block was perfect
         {
             //  If player does a perfect block and the source is a projectile, 'reflect' the projectile back with adjusted parameters.  
-            if(blockLevel == 2 && secondarySource)
+            if(secondarySource)
             {
                 PlayerRange _playerRange = Target.GetComponent<PlayerRange>();
                 Arrow _arrow = secondarySource.GetComponent<Arrow>();
@@ -43,26 +51,24 @@ public class CombatModifier : MonoBehaviour
                 _arrow.IsCrit = CriticalChance.CheckCritical(_playerRange.GetComponent<BaseCharacter>().CriticalChance);
                 _arrow.TargetTag = Tags.Enemy;
             }
-            //  Audio
-            Target.GetComponent<PlayerMelee>().ProcessBlock(blockLevel);
+            //  Process the block
+            Target.GetComponent<PlayerMelee>().ProcessBlock(blockLevel, adjustedDamage);
         }
         else  // else if attack was not blocked.
         {
-            float adjustedDamage = ModifyDamage(Source, Damage, didCrit, Target);
-
             //  deal the adjusted damage
             Target.GetComponent<Health>().AdjustHP(adjustedDamage * -1);
 
             //  Extra aftereffects (Processes, Sounds, knockback, etc.)
             if (Target.CompareTag(Tags.Enemy))
             {
-                Target.GetComponent<AIStatePattern>().ProcessHit(Source);
+                Target.GetComponent<AIStatePattern>().ProcessHit(Source, adjustedDamage);
             }
 
             //  UI
             DisplayCombatText(Source, Target, didCrit, damageText.transform.parent, Target.transform.position + Target.transform.up * 1.5f, adjustedDamage.ToString());
         }
-
+        //  Set the current target of the attacker
         SetAttacker(Source, Target);
 
         //Debug.Log(Source.GetComponent<BaseCharacter>().Name + " dealt " + adjustedDamage + " damage to " + Target.GetComponent<BaseCharacter>().Name);

@@ -4,7 +4,7 @@ using System.Collections;
 public class PatrolState : IEnemyState
 {
     private readonly AIStatePattern myObject;
-    private int nextWayPoint;
+    private int nextWayPoint = 0;
 
     public PatrolState(AIStatePattern statePattern)
     {

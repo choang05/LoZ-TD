@@ -194,7 +194,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127090
+  thisInstanceId: 145690
   Undone: 0
 --- !u!114 &5476878
 MonoBehaviour:
@@ -441,7 +441,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127114
+  thisInstanceId: 145714
   Undone: 1
 --- !u!1 &148741949
 GameObject:
@@ -578,7 +578,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127124
+  thisInstanceId: 145724
   Undone: 1
 --- !u!114 &153921477
 MonoBehaviour:
@@ -2365,7 +2365,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127152
+  thisInstanceId: 145752
   Undone: 0
 --- !u!1 &257193837
 GameObject:
@@ -2524,7 +2524,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127166
+  thisInstanceId: 145766
   Undone: 0
 --- !u!1 &270364404
 GameObject:
@@ -2738,7 +2738,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127188
+  thisInstanceId: 145788
   Undone: 1
 --- !u!1 &432293116
 GameObject:
@@ -3672,7 +3672,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127306
+  thisInstanceId: 145906
   Undone: 1
 --- !u!1 &894340093
 GameObject:
@@ -4384,7 +4384,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127394
+  thisInstanceId: 145994
   Undone: 0
 --- !u!1 &1304792686
 GameObject:
@@ -4634,7 +4634,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127420
+  thisInstanceId: 146020
   Undone: 1
 --- !u!4 &1341357064
 Transform:
@@ -4752,7 +4752,7 @@ MonoBehaviour:
   ImportedFrom: 1
   ImportedFile: G:/Code/PicaVoxel/vox/teapot.vox
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127428
+  thisInstanceId: 146028
   Undone: 0
 --- !u!1 &1374083305
 GameObject:
@@ -4980,7 +4980,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127450
+  thisInstanceId: 146050
   Undone: 0
 --- !u!1 &1408689796
 GameObject:
@@ -5340,7 +5340,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127488
+  thisInstanceId: 146088
   Undone: 0
 --- !u!114 &1534229698
 MonoBehaviour:
@@ -5538,7 +5538,7 @@ MonoBehaviour:
   ImportedFrom: 1
   ImportedFile: G:/Code/PicaVoxel/vox/dragon.vox
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127506
+  thisInstanceId: 146106
   Undone: 0
 --- !u!1 &1586086856
 GameObject:
@@ -5893,7 +5893,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127546
+  thisInstanceId: 146146
   Undone: 0
 --- !u!1 &1759909429
 GameObject:
@@ -5987,7 +5987,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127550
+  thisInstanceId: 146150
   Undone: 1
 --- !u!4 &1759909431
 Transform:
@@ -6529,7 +6529,7 @@ MonoBehaviour:
   ImportedFrom: 0
   ImportedFile: 
   ImportedCutoutColor: {r: 0, g: 0, b: 0, a: 0}
-  thisInstanceId: 127612
+  thisInstanceId: 146212
   Undone: 0
 --- !u!1 &1883081204
 GameObject:
